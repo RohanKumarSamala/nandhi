@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pass Booking & Event Details | Navratri Dandiya Mahotsav 2.0 Nalagonda</title>
+  <meta name="description"
+    content="Official pass booking and event details for Navratri Dandiya Mahotsav 2.0 at Lakshmi Gardens, Nalagonda on 19 October 2026. Organised by Nandhi Youth.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="booking-page-body">
+
+  <!-- Minimalist Navigation Bar -->
+  <header class="navbar" id="navbar">
+    <div class="nav-brand-wrap">
+      <a href="index.html#home" class="nav-logo" style="display:flex; align-items:center; gap:10px;">
+        <img src="images/hero-logo.jpeg" alt="Nandhi Youth Logo" style="width:34px; height:34px; border-radius:50%; border:1.5px solid var(--gold-primary); box-shadow:0 0 10px rgba(255,222,33,0.35); object-fit:cover;">
+        <span>DANDIYA MAHOTSAV <span class="badge-2">2.0</span></span>
+      </a>
+      <span class="nav-organizer-tag">Organised by Nandhi Youth</span>
+    </div>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html#home" class="nav-link">Home</a>
+      <a href="index.html#poster" class="nav-link">Poster</a>
+      <a href="#passesStack" class="nav-link">Passes</a>
+      <a href="index.html#venue" class="nav-link">Venue</a>
+      <a href="https://www.instagram.com/dandiyaevent_nalgonda?utm_source=qr&stkn=MWRzZXNsOHF5OG4zOQ==" target="_blank" rel="noopener" class="nav-social-btn" title="Follow @dandiyaevent_nalgonda on Instagram" aria-label="Instagram">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+      </a>
+      <a href="index.html" class="nav-cta">Back to Main</a>
+    </nav>
+
+    <div class="nav-hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#home" class="mobile-link">Home</a>
+    <a href="index.html#poster" class="mobile-link">Official Poster</a>
+    <a href="#passesStack" class="mobile-link">Passes &amp; Reservation</a>
+    <a href="index.html#venue" class="mobile-link">Venue Details</a>
+    <a href="https://www.instagram.com/dandiyaevent_nalgonda?utm_source=qr&stkn=MWRzZXNsOHF5OG4zOQ==" target="_blank" rel="noopener" class="mobile-link" style="color:var(--gold-primary); display:flex; align-items:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+      </svg>
+      Instagram (@dandiyaevent_nalgonda)
+    </a>
+    <a href="index.html" class="btn-primary mobile-link" style="margin-top: 15px;">Back to Main Page</a>
+  </div>
+
+  <div class="booking-page-wrap">
+    <!-- Header Hero Section -->
+    <section class="booking-header-section">
+      <div class="container">
+        <div class="booking-breadcrumb">
+          <a href="index.html">Home</a>
+          <span>/</span>
+          <span>Official Pass Reservation & Details</span>
+        </div>
+
+        <div class="section-tag">OFFICIAL PASS RESERVATION</div>
+        <h1 class="booking-header-title">Pass Booking & <span>Event Details</span></h1>
+
+        <p class="booking-header-sub">
+          Early Bird tickets are valid until 5th October 2026. General tickets will be available after 5th October,
+          while On-Day tickets are available for same-day entry.
+        </p>
+
+        <div class="booking-meta-badges">
+          <div class="b-badge">19 October 2026</div>
+          <div class="b-badge">Gates Open 5:00 PM</div>
+          <div class="b-badge">Lakshmi Gardens, Nalagonda</div>
+          <div class="b-badge">Organised by Nandhi Youth</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Section: Checkout Form First, Followed by Big Horizontal Pass Cards -->
+    <section class="booking-body-section">
+      <div class="container">
+
+        <!-- 1. TOP: Booking & Reservation Checkout Form -->
+        <div class="booking-top-panel-wrap" id="bookingFormSection">
+          <div class="booking-checkout-panel">
+            <div class="modal-tag">Official Pass Reservation</div>
+            <h3 class="panel-title">Dandiya Mahotsav 2.0</h3>
+            <p class="panel-sub">Enter attendee details and proceed to our 7-minute temporary pass hold and UPI payment confirmation window.</p>
+
+            <!-- 7-Minute Hold Notice Banner -->
+            <div style="background:rgba(255,222,33,0.06); border:1px solid rgba(255,222,33,0.25); border-radius:8px; padding:12px; margin-bottom:16px;">
+              <div style="font-size:0.75rem; font-weight:700; color:var(--gold-primary); letter-spacing:0.08em; text-transform:uppercase; display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+                <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--gold-primary); box-shadow:0 0 8px var(--gold-primary);"></span>
+                7-Minute Pass Hold Window
+              </div>
+              <div style="font-size:0.76rem; color:var(--text-secondary); line-height:1.5;">
+                Your pass selection is temporarily reserved for 7 minutes once you proceed. Complete instant UPI verification within this window to secure your pass.
+              </div>
+            </div>
+
+            <form id="detailedBookingForm" onsubmit="proceedToTimerReservation(event)">
+
+              <!-- Current Active Admission Tier (Locked by Date Phase) -->
+              <div class="form-group">
+                <label>Current Admission Phase &amp; Ticket Price</label>
+                <div style="background: rgba(255,222,33,0.06); border: 1.5px solid var(--gold-primary); border-radius: 8px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                  <div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <span id="activeTierName" style="font-family: var(--font-heading); font-weight: 800; font-size: 1.1rem; color: var(--gold-primary);">Early Bird Pass</span>
+                      <span class="featured-badge" id="activeTierBadge" style="position:static; display:inline-block; font-size:0.62rem; padding:2px 8px;">ACTIVE NOW</span>
+                    </div>
+                    <div id="activeTierValidity" style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px;">
+                      Valid until 5th October 2026 • Full Garba &amp; Dandiya arena access
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div id="activeTierRate" style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 900; color: #ffffff; line-height: 1;">
+                      ₹199
+                    </div>
+                    <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px;">per person</div>
+                  </div>
+                </div>
+                <input type="hidden" id="selectedPassInput" value="Early Bird Pass">
+              </div>
+
+              <!-- Full Name -->
+              <div class="form-group">
+                <label for="attendeeName">Full Name of Attendee</label>
+                <input type="text" id="attendeeName" placeholder="Enter your full name" required>
+              </div>
+
+              <!-- Phone Number -->
+              <div class="form-group">
+                <label for="attendeePhone">WhatsApp / Mobile Number</label>
+                <input type="tel" id="attendeePhone" placeholder="Enter 10-digit number" pattern="[0-9]{10}"
+                  maxlength="10" required>
+              </div>
+
+              <!-- Pass Quantity Stepper -->
+              <div class="form-group">
+                <label>Number of Passes (Quantity)</label>
+                <div class="qty-stepper-wrap">
+                  <button type="button" class="qty-btn" id="qtyMinus" onclick="adjustQty(-1)" aria-label="Decrease passes">&minus;</button>
+                  <div class="qty-display-box">
+                    <input type="number" id="attendeeQty" value="1" min="1" max="20" readonly>
+                    <span class="qty-person-label" id="qtyPersonLabel">Person (1 Pass)</span>
+                  </div>
+                  <button type="button" class="qty-btn" id="qtyPlus" onclick="adjustQty(1)" aria-label="Increase passes">&plus;</button>
+                </div>
+              </div>
+
+              <!-- Order Breakdown -->
+              <div class="order-breakdown-card">
+                <div class="breakdown-row">
+                  <span>Rate per person</span>
+                  <span id="summaryRate">₹199</span>
+                </div>
+                <div class="breakdown-row">
+                  <span>Attendees</span>
+                  <span id="summaryQty">1 Person</span>
+                </div>
+                <div class="breakdown-row total-row">
+                  <span>Total Amount</span>
+                  <span id="summaryTotal">₹199</span>
+                </div>
+              </div>
+
+              <!-- Primary Action Button: Timer Reservation Hold -->
+              <button type="submit" class="btn-primary" id="btnProceedTimer" style="width: 100%; padding: 14px; font-size: 0.85rem; letter-spacing:0.08em;">
+                PROCEED TO RESERVATION (7-MIN HOLD)
+              </button>
+            </form>
+
+            <!-- Coordinators Helpline Box -->
+            <div class="coordinator-card-box">
+              <div class="coordinator-title-label">Coordinators &amp; Helpline</div>
+              <div class="coordinator-pills">
+                <div class="coord-pill">
+                  <span>Shashank</span>
+                  <a href="tel:+917799888194">+91 77998 88194</a>
+                </div>
+                <div class="coord-pill">
+                  <span>Abhi</span>
+                  <a href="tel:+916302321937">+91 63023 21937</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 2. AFTER THE PAYMENT FORM: Pass Pricing Schedule & Phasing (Pure Display) -->
+        <div class="passes-horizontal-section" id="passesStack">
+          <div class="passes-section-header">
+            <div class="section-subtitle-sm">PASS PRICING SCHEDULE</div>
+            <h2 class="section-title-sm">Event Pricing &amp; Phasing</h2>
+            <p class="section-desc-sm">
+              Ticket pricing is strictly scheduled by booking dates: Early Bird tickets are ₹199 until 5th October 2026, General tickets are ₹249 after 5th October, and On-Day tickets are ₹299 for same-day entry.
+            </p>
+          </div>
+
+          <!-- 3-Column Big Horizontal Grid -->
+          <div class="passes-horizontal-grid">
+
+            <!-- 1. Early Bird Pass -->
+            <div class="pass-card-big active-selection" id="cardEarlyBird">
+              <div class="pass-card-big-header">
+                <div class="pass-card-big-name">
+                  Early Bird Pass
+                  <span class="featured-badge" style="position:static; display:inline-block;">EARLY BIRD</span>
+                </div>
+                <div class="pass-card-big-sub">Advance Booking Special</div>
+              </div>
+
+              <div class="pass-card-big-price-wrap">
+                <div class="pass-card-big-price">
+                  ₹199 <span>per person</span>
+                </div>
+              </div>
+
+              <div class="pass-card-big-features">
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Price: ₹199 per person
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Valid until 5th October 2026
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Garba &amp; Dandiya arena access
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Guaranteed entry wristband
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Live sound &amp; DJ experience
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Dedicated event security
+                </div>
+              </div>
+
+              <div class="pass-card-big-status" id="statusPillEarlyBird">
+                <span class="status-dot"></span>CURRENT ACTIVE PRICE (₹199)
+              </div>
+            </div>
+
+            <!-- 2. General Pass -->
+            <div class="pass-card-big" id="cardGeneral">
+              <div class="pass-card-big-header">
+                <div class="pass-card-big-name">
+                  General Pass
+                  <span class="featured-badge" style="position:static; display:inline-block;">POPULAR</span>
+                </div>
+                <div class="pass-card-big-sub">Standard Phase Admission</div>
+              </div>
+
+              <div class="pass-card-big-price-wrap">
+                <div class="pass-card-big-price">
+                  ₹249 <span>per person</span>
+                </div>
+              </div>
+
+              <div class="pass-card-big-features">
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Price: ₹249 per person
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Available after 5th October 2026
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Garba &amp; Dandiya arena access
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Guaranteed entry wristband
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Live sound &amp; DJ experience
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Dedicated event security
+                </div>
+              </div>
+
+              <div class="pass-card-big-status" id="statusPillGeneral">
+                AVAILABLE AFTER 5TH OCT 2026 (₹249)
+              </div>
+            </div>
+
+            <!-- 3. On-Day Pass -->
+            <div class="pass-card-big" id="cardOnDay">
+              <div class="pass-card-big-header">
+                <div class="pass-card-big-name">
+                  On-Day Pass
+                </div>
+                <div class="pass-card-big-sub">Event Day Gate Booking</div>
+              </div>
+
+              <div class="pass-card-big-price-wrap">
+                <div class="pass-card-big-price">
+                  ₹299 <span>per person</span>
+                </div>
+              </div>
+
+              <div class="pass-card-big-features">
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Price: ₹299 per person
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Available for same-day entry
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Garba &amp; Dandiya arena access
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Guaranteed entry wristband
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Live sound &amp; DJ experience
+                </div>
+                <div class="pass-card-big-feature">
+                  <span class="feature-tick">&#10003;</span>
+                  Dedicated event security
+                </div>
+              </div>
+
+              <div class="pass-card-big-status" id="statusPillOnDay">
+                AVAILABLE ON 19TH OCT 2026 (₹299)
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 3. Official UPI Payment Scanner & Download Section -->
+        <div style="background: var(--bg-card); border: 1.5px solid var(--border-subtle); border-radius: 14px; padding: 32px 24px; max-width: 820px; margin: 0 auto 36px auto; text-align: center; box-shadow: 0 16px 40px rgba(0,0,0,0.5);">
+          <div class="section-tag" style="margin-bottom: 8px;">OFFICIAL SCANNER</div>
+          <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">
+            Scan &amp; Pay via <span style="color: var(--gold-primary);">PhonePe / Any UPI App</span>
+          </h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); max-width: 580px; margin: 0 auto 20px auto; line-height: 1.55;">
+            Scan this official QR Code directly using PhonePe, Google Pay, Paytm, BHIM, or any UPI app to complete your pass payments instantly.
+          </p>
+
+          <!-- QR Scanner Display Box -->
+          <div style="display: inline-block; background: #ffffff; padding: 14px; border-radius: 12px; border: 2.5px solid var(--gold-primary); box-shadow: 0 12px 36px rgba(0,0,0,0.7), 0 0 24px rgba(255, 222, 33, 0.2); margin-bottom: 22px;">
+            <img src="images/phonepe-scanner.png" alt="Official PhonePe UPI QR Scanner - Navratri Dandiya Mahotsav 2.0" style="width: 220px; height: 220px; display: block; object-fit: contain; border-radius: 6px;">
+          </div>
+
+          <!-- Action Buttons: Download Button & Booking Form Jump -->
+          <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="images/phonepe-scanner.png" download="Dandiya_Mahotsav_PhonePe_QR.png" class="btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; font-size: 0.82rem; font-weight: 700; text-transform: uppercase;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download Scanner
+            </a>
+            <a href="#bookingFormSection" class="btn-secondary" style="border-color: rgba(255,255,255,0.2); padding: 12px 22px; font-size: 0.82rem;">
+              Fill Booking Form &uarr;
+            </a>
+          </div>
+
+          <!-- Help Note -->
+          <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 18px; margin-bottom: 0;">
+            Note: Once scanned and paid, please note down your 12-digit UTR / UPI Reference Number from your payment receipt to confirm your reservation.
+          </p>
+        </div>
+
+        <!-- 4. Venue Destination Overview -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 28px; max-width: 820px; margin: 0 auto 40px auto; text-align: center;">
+          <div class="section-subtitle-sm">Venue Destination</div>
+          <h3 style="font-family: var(--font-display); font-size: 1.45rem; color: var(--gold-primary); margin-bottom: 12px;">
+            Lakshmi Gardens, Nalagonda
+          </h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;">
+            1-69, Opposite RTO Office, Hyderabad Road, Marriguda, Nalgonda, Telangana 508001
+          </p>
+          <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <a href="https://maps.app.goo.gl/kCH1uRstUQ7v6KrCA" target="_blank" rel="noopener" class="btn-primary" style="padding:11px 24px; font-size:0.78rem;">
+              Open Google Maps
+            </a>
+            <a href="index.html#venue" class="btn-secondary" style="padding:11px 24px; font-size:0.78rem;">
+              View Venue Map &amp; Details
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- Minimalist Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-left">
+        <div class="footer-logo">DANDIYA MAHOTSAV <span>2.0</span></div>
+        <p class="footer-sub">Organised with devotion by Nandhi Youth • Lakshmi Gardens, Nalagonda</p>
+      </div>
+
+      <div class="footer-links">
+        <a href="index.html#home">Home</a>
+        <a href="index.html#poster">Poster</a>
+        <a href="index.html#passes">Passes</a>
+        <a href="index.html#venue">Venue</a>
+        <a href="https://www.instagram.com/dandiyaevent_nalgonda?utm_source=qr&stkn=MWRzZXNsOHF5OG4zOQ==" target="_blank" rel="noopener" style="color:var(--gold-primary); font-weight:700; display:inline-flex; align-items:center; gap:6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+          Instagram (@dandiyaevent_nalgonda)
+        </a>
+        <a href="https://api.whatsapp.com/send?phone=917799888194&text=Hello%20Shashank,%20I%20have%20an%20enquiry%20about%20Dandiya%20Mahotsav%202.0"
+          target="_blank" rel="noopener">WhatsApp (Shashank)</a>
+        <a href="https://api.whatsapp.com/send?phone=916302321937&text=Hello%20Abhi,%20I%20have%20an%20enquiry%20about%20Dandiya%20Mahotsav%202.0"
+          target="_blank" rel="noopener">WhatsApp (Abhi)</a>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; 2026 Navratri Dandiya Mahotsav 2.0. Organised by Nandhi Youth. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Firebase App & Cloud Firestore SDKs (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <!-- Script for Automated Calendar Pricing Engine & Timer Hold Reservation -->
+  <script>
+    // Strict calendar-based pricing engine per requirements:
+    // 1. Before Oct 5, 2026: 199 (Early Bird Pass)
+    // 2. From Oct 5, 2026 to Oct 18, 2026: 249 (General Pass)
+    // 3. On Event Day (19 Oct 2026 onwards): 299 (On-Day Pass)
+    function getCalendarPricing() {
+      const now = new Date();
+      // Month index 9 is October in JavaScript Date (0-indexed: Jan=0, Feb=1, ..., Oct=9)
+      const oct5 = new Date(2026, 9, 5, 0, 0, 0);
+      const oct19 = new Date(2026, 9, 19, 0, 0, 0);
+
+      if (now < oct5) {
+        return {
+          tierName: 'Early Bird Pass',
+          price: 199,
+          badgeText: 'ACTIVE NOW',
+          validityText: 'Valid until 5th October 2026 &bull; Full Garba &amp; Dandiya arena access',
+          activeCardId: 'cardEarlyBird'
+        };
+      } else if (now < oct19) {
+        return {
+          tierName: 'General Pass',
+          price: 249,
+          badgeText: 'ACTIVE NOW',
+          validityText: 'Available after 5th October 2026 &bull; Full Garba &amp; Dandiya arena access',
+          activeCardId: 'cardGeneral'
+        };
+      } else {
+        return {
+          tierName: 'On-Day Pass',
+          price: 299,
+          badgeText: 'LIVE ON-DAY',
+          validityText: 'Available for same-day entry (19th Oct 2026) &bull; Full Garba &amp; Dandiya arena access',
+          activeCardId: 'cardOnDay'
+        };
+      }
+    }
+
+    const activeTier = getCalendarPricing();
+    const currentPass = activeTier.tierName;
+    const currentPrice = activeTier.price;
+
+    function applyCalendarPricing() {
+      // 1. Update checkout form locked tier display
+      const nameEl = document.getElementById('activeTierName');
+      const badgeEl = document.getElementById('activeTierBadge');
+      const valEl = document.getElementById('activeTierValidity');
+      const rateEl = document.getElementById('activeTierRate');
+      const hiddenInput = document.getElementById('selectedPassInput');
+      const summaryRate = document.getElementById('summaryRate');
+
+      if (nameEl) nameEl.textContent = activeTier.tierName;
+      if (badgeEl) badgeEl.textContent = activeTier.badgeText;
+      if (valEl) valEl.innerHTML = activeTier.validityText;
+      if (rateEl) rateEl.textContent = '₹' + activeTier.price;
+      if (hiddenInput) hiddenInput.value = activeTier.tierName;
+      if (summaryRate) summaryRate.textContent = '₹' + activeTier.price;
+
+      // 2. Synchronize horizontal pricing display cards below (Pure display, no manual selection)
+      const allCards = ['cardEarlyBird', 'cardGeneral', 'cardOnDay'];
+      allCards.forEach(id => {
+        const card = document.getElementById(id);
+        if (card) card.classList.remove('active-selection');
+      });
+
+      const activeCard = document.getElementById(activeTier.activeCardId);
+      if (activeCard) {
+        activeCard.classList.add('active-selection');
+      }
+
+      // 3. Update status indicators on each display card
+      const pillEarly = document.getElementById('statusPillEarlyBird');
+      const pillGeneral = document.getElementById('statusPillGeneral');
+      const pillOnDay = document.getElementById('statusPillOnDay');
+
+      if (pillEarly && pillGeneral && pillOnDay) {
+        if (activeTier.activeCardId === 'cardEarlyBird') {
+          pillEarly.innerHTML = '<span class="status-dot"></span>CURRENT ACTIVE PRICE (₹199)';
+          pillGeneral.innerHTML = 'AVAILABLE AFTER 5TH OCT 2026 (₹249)';
+          pillOnDay.innerHTML = 'AVAILABLE ON 19TH OCT 2026 (₹299)';
+        } else if (activeTier.activeCardId === 'cardGeneral') {
+          pillEarly.innerHTML = 'PHASE CONCLUDED (ENDED 5TH OCT)';
+          pillGeneral.innerHTML = '<span class="status-dot"></span>CURRENT ACTIVE PRICE (₹249)';
+          pillOnDay.innerHTML = 'AVAILABLE ON 19TH OCT 2026 (₹299)';
+        } else {
+          pillEarly.innerHTML = 'PHASE CONCLUDED (ENDED 5TH OCT)';
+          pillGeneral.innerHTML = 'PHASE CONCLUDED (ENDED 18TH OCT)';
+          pillOnDay.innerHTML = '<span class="status-dot"></span>CURRENT ACTIVE PRICE (₹299)';
+        }
+      }
+
+      updateDetailedCalculations();
+    }
+
+    function adjustQty(delta) {
+      const input = document.getElementById('attendeeQty');
+      let currentVal = parseInt(input.value, 10) || 1;
+      let newVal = currentVal + delta;
+      if (newVal < 1) newVal = 1;
+      if (newVal > 20) newVal = 20;
+      input.value = newVal;
+
+      const label = document.getElementById('qtyPersonLabel');
+      if (label) {
+        label.innerText = newVal === 1 ? 'Person (1 Pass)' : `Persons (${newVal} Passes)`;
+      }
+      updateDetailedCalculations();
+    }
+
+    function updateDetailedCalculations() {
+      const qty = parseInt(document.getElementById('attendeeQty').value, 10) || 1;
+      const total = qty * currentPrice;
+
+      const label = document.getElementById('qtyPersonLabel');
+      if (label) {
+        label.innerText = qty === 1 ? 'Person (1 Pass)' : `Persons (${qty} Passes)`;
+      }
+
+      document.getElementById('summaryQty').innerText = qty + (qty === 1 ? ' Person' : ' Persons');
+      document.getElementById('summaryTotal').innerText = '₹' + total;
+    }
+
+    function proceedToTimerReservation(e) {
+      e.preventDefault();
+      const name = document.getElementById('attendeeName').value.trim();
+      const phone = document.getElementById('attendeePhone').value.trim();
+      const qty = parseInt(document.getElementById('attendeeQty').value, 10) || 1;
+      const total = qty * currentPrice;
+
+      if (!name) {
+        alert('Please enter your full name.');
+        document.getElementById('attendeeName').focus();
+        return;
+      }
+
+      if (!phone || phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+        alert('Please enter a valid 10-digit mobile number.');
+        document.getElementById('attendeePhone').focus();
+        return;
+      }
+
+      const resId = 'DM2-' + Math.floor(1000 + Math.random() * 9000);
+      const expiresAt = Date.now() + (7 * 60 * 1000); // 7-minute reservation hold
+
+      const reservationData = {
+        reservationId: resId,
+        name: name,
+        phone: phone,
+        passTier: currentPass,
+        pricePerPass: currentPrice,
+        quantity: qty,
+        totalAmount: total,
+        status: 'Reserved (Timer)',
+        createdAt: new Date().toISOString(),
+        expiresAt: expiresAt
+      };
+
+      // 1. Store in sessionStorage for payment.html countdown timer
+      sessionStorage.setItem('dandiya_reservation', JSON.stringify(reservationData));
+
+      // 2. Sync reservation hold to Cloud Firestore and LocalStorage
+      const newHold = {
+        id: resId,
+        createdAt: reservationData.createdAt,
+        name: name,
+        phone: phone,
+        passTier: currentPass,
+        pricePerPass: currentPrice,
+        quantity: qty,
+        totalAmount: total,
+        status: 'Reserved (Timer)',
+        attended: false,
+        paymentMode: 'Awaiting UPI (Timer Hold)',
+        notes: '7-minute pass hold initiated'
+      };
+
+      if (typeof DandiyaDB !== 'undefined') {
+        DandiyaDB.saveBooking(newHold);
+      } else {
+        try {
+          const existing = JSON.parse(localStorage.getItem('dandiya_bookings') || '[]');
+          existing.unshift(newHold);
+          localStorage.setItem('dandiya_bookings', JSON.stringify(existing));
+        } catch (err) {
+          console.error('Local reservation store error', err);
+        }
+      }
+
+      // 3. Smooth redirect to payment.html (the timer booking page)
+      window.location.href = 'payment.html';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Lock and apply default pricing strictly by date
+      applyCalendarPricing();
+
+      // Mobile hamburger drawer toggle
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', () => {
+          mobileMenu.classList.toggle('active');
+          hamburger.classList.toggle('active');
+        });
+        document.querySelectorAll('.mobile-link').forEach(link => {
+          link.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            hamburger.classList.remove('active');
+          });
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>

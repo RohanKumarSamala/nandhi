@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Navratri Dandiya Mahotsav 2.0</title>
+  <meta name="robots" content="noindex,nofollow">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- SheetJS for Excel Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #090103;
+      --s1: #150205;
+      --s2: #1e0307;
+      --b: rgba(255, 222, 33, 0.16);
+      --b-focus: #FFDE21;
+      --m: rgba(255, 255, 255, 0.55);
+      --gold: #FFDE21;
+      --gold-warm: #EAA812;
+      --green: #22c55e;
+      --red: #ef4444;
+      --f: 'Inter', system-ui, -apple-system, sans-serif;
+      --f-heading: 'Outfit', sans-serif;
+      --f-display: 'Cinzel', Georgia, serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: #fff;
+      font-family: var(--f);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .shell {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      background: #110104;
+      border-right: 1px solid var(--b);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      overflow-y: auto;
+    }
+
+    .sb-logo {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--b);
+    }
+
+    .sb-logo-title {
+      font-family: var(--f-heading);
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #fff;
+    }
+
+    .sb-logo-title span {
+      color: var(--gold);
+    }
+
+    .sb-logo-sub {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-warm);
+      font-weight: 700;
+    }
+
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      font-family: var(--f-heading);
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--m);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 4px;
+    }
+
+    .sb-link:hover, .sb-link.act {
+      background: rgba(255, 222, 33, 0.08);
+      color: #fff;
+    }
+
+    .sb-link.act {
+      color: var(--gold);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .sb-sep {
+      height: 1px;
+      background: var(--b);
+      margin: 0.8rem 0;
+    }
+
+    .sb-logout {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      font-family: var(--f-heading);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--m);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .sb-logout:hover {
+      color: #ff6b6b;
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.25);
+    }
+
+    /* ── Main Area ── */
+    .main {
+      flex: 1;
+      padding: 1.6rem 2.2rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.6rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .page-title {
+      font-family: var(--f-display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .page-title span {
+      color: var(--gold);
+    }
+
+    .page-sub {
+      font-size: 0.78rem;
+      color: var(--m);
+      margin-top: 0.25rem;
+    }
+
+    .admin-chip {
+      font-size: 0.74rem;
+      color: var(--gold-warm);
+      background: var(--s1);
+      border: 1px solid var(--b);
+      border-radius: 20px;
+      padding: 0.35rem 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── Stat Cards ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .stat-card {
+      background: var(--s1);
+      border: 1px solid var(--b);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--gold-warm);
+    }
+
+    .stat-card .lbl {
+      font-family: var(--f-heading);
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--m);
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-card .num {
+      font-family: var(--f-heading);
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1;
+      color: #fff;
+    }
+
+    .stat-card .sub {
+      font-size: 0.72rem;
+      color: var(--m);
+      margin-top: 0.35rem;
+    }
+
+    .stat-card.gold .num { color: var(--gold); }
+    .stat-card.green .num { color: var(--green); }
+    .stat-card.yellow .num { color: #f59e0b; }
+    .stat-card.purple .num { color: #a78bfa; }
+
+    /* ── Controls Bar ── */
+    .controls {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--s1);
+      border: 1px solid var(--b);
+      border-radius: 8px;
+      padding: 0.65rem 1rem 0.65rem 1rem;
+      font-family: var(--f);
+      font-size: 0.85rem;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--b-focus);
+      box-shadow: 0 0 0 2px rgba(255, 222, 33, 0.15);
+    }
+
+    .filter-select {
+      background: var(--s1);
+      border: 1px solid var(--b);
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+      font-family: var(--f);
+      font-size: 0.8rem;
+      color: #fff;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-select option {
+      background: var(--bg);
+      color: #fff;
+    }
+
+    .btn-control {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--b);
+      border-radius: 8px;
+      padding: 0.65rem 1.1rem;
+      color: #fff;
+      cursor: pointer;
+      font-family: var(--f-heading);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-control:hover {
+      background: rgba(255, 222, 33, 0.1);
+      border-color: var(--gold);
+    }
+
+    .btn-export {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: var(--green);
+    }
+
+    .btn-export:hover {
+      background: rgba(34, 197, 94, 0.2);
+    }
+
+    .btn-spot {
+      background: rgba(255, 222, 33, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+    }
+
+    .btn-spot:hover {
+      background: var(--gold);
+      color: #140103;
+    }
+
+    /* ── Table ── */
+    .table-wrap {
+      background: var(--s1);
+      border: 1px solid var(--b);
+      border-radius: 10px;
+      overflow-x: auto;
+      flex: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      min-width: 960px;
+    }
+
+    th, td {
+      padding: 0.85rem 1.1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.82rem;
+    }
+
+    th {
+      font-family: var(--f-heading);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-warm);
+      background: rgba(255, 255, 255, 0.02);
+      font-weight: 700;
+    }
+
+    tr:hover td {
+      background: rgba(255, 222, 33, 0.02);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+      font-family: var(--f-heading);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .bg-green {
+      background: rgba(34, 197, 94, 0.12);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.35);
+    }
+
+    .bg-yellow {
+      background: rgba(245, 158, 11, 0.12);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .bg-red {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .bg-blue {
+      background: rgba(59, 130, 246, 0.14);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    /* Attendance Toggle Switch */
+    .att-toggle-wrap {
+      text-align: center;
+    }
+
+    .att-toggle {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 38px;
+      height: 20px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.06);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s ease;
+      vertical-align: middle;
+    }
+
+    .att-toggle:checked {
+      background: #22c55e;
+      border-color: #22c55e;
+    }
+
+    .att-toggle::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      top: 1.5px;
+      left: 2px;
+      transition: transform 0.25s ease;
+    }
+
+    .att-toggle:checked::after {
+      transform: translateX(18px);
+    }
+
+    .btn-action {
+      padding: 0.4rem 0.85rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--b);
+      border-radius: 6px;
+      color: #fff;
+      font-family: var(--f-heading);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #140103;
+    }
+
+    .wa-link {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: var(--gold);
+      text-decoration: none;
+      margin-top: 3px;
+    }
+
+    .wa-link:hover {
+      text-decoration: underline;
+    }
+
+    /* ── Modals ── */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 20px;
+    }
+
+    .modal-bg.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      width: min(540px, 94vw);
+      background: #190205;
+      border: 1px solid var(--b);
+      border-radius: 12px;
+      padding: 2rem;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-bg.open .modal {
+      transform: none;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      background: none;
+      border: none;
+      color: var(--m);
+      font-size: 1.6rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--gold);
+    }
+
+    .modal-title {
+      font-family: var(--f-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--b);
+    }
+
+    .modal-title span {
+      color: var(--gold);
+    }
+
+    .kv {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      font-size: 0.86rem;
+      gap: 12px;
+    }
+
+    .kv .k {
+      color: var(--m);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .kv .v {
+      font-weight: 600;
+      text-align: right;
+      color: #fff;
+    }
+
+    .m-actions {
+      display: flex;
+      gap: 0.7rem;
+      margin-top: 1.5rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--b);
+      flex-wrap: wrap;
+    }
+
+    .btn-m {
+      flex: 1;
+      min-width: 120px;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-family: var(--f-heading);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn-m-appr {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    .btn-m-appr:hover {
+      background: #16a34a;
+    }
+
+    .btn-m-wa {
+      background: #25D366;
+      color: #fff;
+    }
+
+    .btn-m-wa:hover {
+      background: #1ebd59;
+    }
+
+    .btn-m-rej {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #ff6b6b;
+    }
+
+    .btn-m-rej:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    .btn-m-del {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--m);
+    }
+
+    .btn-m-del:hover {
+      color: #ff6b6b;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    /* Spot Form */
+    .spot-form-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-group-admin {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-group-admin label {
+      font-family: var(--f-heading);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-warm);
+      font-weight: 700;
+    }
+
+    .form-group-admin input, .form-group-admin select {
+      background: rgba(10, 1, 3, 0.85);
+      border: 1px solid var(--b);
+      border-radius: 6px;
+      padding: 0.75rem 0.95rem;
+      font-family: var(--f);
+      font-size: 0.88rem;
+      color: #fff;
+      outline: none;
+    }
+
+    .form-group-admin input:focus, .form-group-admin select:focus {
+      border-color: var(--b-focus);
+    }
+
+    /* ── Plus / Minus Quantity Stepper ── */
+    .qty-stepper-wrap {
+      display: flex;
+      align-items: center;
+      background: rgba(10, 1, 2, 0.9);
+      border: 1px solid var(--b);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .qty-stepper-wrap:focus-within {
+      border-color: var(--b-focus);
+      box-shadow: 0 0 0 2px rgba(255, 222, 33, 0.15);
+    }
+
+    .qty-btn {
+      width: 44px;
+      height: 42px;
+      background: rgba(255, 222, 33, 0.08);
+      border: none;
+      color: var(--gold);
+      font-family: var(--f-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      user-select: none;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .qty-btn:hover {
+      background: var(--gold);
+      color: #140103;
+    }
+
+    .qty-btn:active {
+      transform: scale(0.92);
+    }
+
+    .qty-display-box {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 10px;
+    }
+
+    .qty-display-box input {
+      width: 34px;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      text-align: center;
+      font-family: var(--f-heading);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--gold);
+      outline: none;
+      pointer-events: none;
+    }
+
+    .qty-person-label {
+      font-size: 0.84rem;
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1e0307;
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      padding: 0.8rem 1.6rem;
+      font-size: 0.85rem;
+      color: #fff;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toast.ok { border-color: #22c55e; color: #86efac; }
+    .toast.err { border-color: #ef4444; color: #fca5a5; }
+
+    @media (max-width: 1080px) {
+      .stats { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 840px) {
+      .shell { flex-direction: column; height: auto; overflow: visible; }
+      .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--b); }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .main { padding: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="shell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sb-logo">
+        <div class="sb-logo-title">DANDIYA MAHOTSAV <span>2.0</span></div>
+        <div class="sb-logo-sub">ADMIN PORTAL</div>
+      </div>
+
+      <button class="sb-link act" id="tab-registrations">Pass Registrations</button>
+      <button class="sb-link" id="btn-open-spot">+ Spot Registration</button>
+      <div class="sb-sep"></div>
+      <button class="sb-link" onclick="window.open('booking.html','_blank')">View Booking Page</button>
+      <button class="sb-link" onclick="window.open('index.html','_blank')">View Website</button>
+      <div class="sb-sep"></div>
+      <button class="sb-link" id="btn-reset-data" style="color:var(--gold-warm); font-size:0.75rem;">Reset Sample Data</button>
+      <button class="sb-logout" id="btn-logout">Sign Out</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="top-bar">
+        <div>
+          <div class="page-title">Pass Registrations &amp; <span>Check-In</span></div>
+          <div class="page-sub">Navratri Dandiya Mahotsav 2.0 &bull; 19 October 2026 &bull; Lakshmi Gardens, Nalagonda</div>
+        </div>
+        <div class="admin-chip" id="adminChip">Admin: Loading...</div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="stats">
+        <div class="stat-card">
+          <div class="lbl">Total Bookings</div>
+          <div class="num" id="st-total">0</div>
+          <div class="sub">All registrations</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="lbl">Pass Headcount</div>
+          <div class="num" id="st-passes">0</div>
+          <div class="sub">Total attendees</div>
+        </div>
+        <div class="stat-card green">
+          <div class="lbl">Confirmed</div>
+          <div class="num" id="st-confirmed">0</div>
+          <div class="sub">Verified passes</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="lbl">Pending</div>
+          <div class="num" id="st-pending">0</div>
+          <div class="sub">Awaiting verification</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="lbl">Checked-In</div>
+          <div class="num" id="st-attended">0</div>
+          <div class="sub">Gate attendance</div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <div class="search-box">
+          <input type="text" id="search-input" placeholder="Search by name, phone, pass tier, or Booking ID...">
+        </div>
+
+        <select class="filter-select" id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Pending">Pending Verification</option>
+          <option value="Reserved (Timer)">Reserved (Timer Hold)</option>
+          <option value="Expired">Expired</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+
+        <select class="filter-select" id="filter-tier">
+          <option value="">All Pass Types</option>
+          <option value="Early Bird Pass">Early Bird Pass (₹199)</option>
+          <option value="General Pass">General Pass (₹249)</option>
+          <option value="On-Day Pass">On-Day Pass (₹299)</option>
+        </select>
+
+        <button class="btn-control" id="btn-refresh">Refresh</button>
+        <button class="btn-control btn-export" id="btn-export">Export Excel (.xlsx)</button>
+        <button class="btn-control btn-spot" id="btn-add-spot">+ Spot Pass</button>
+      </div>
+
+      <!-- Registrations Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Date &amp; Time</th>
+              <th>Attendee Name</th>
+              <th>Contact / WhatsApp</th>
+              <th>Pass Category</th>
+              <th>Quantity</th>
+              <th>Total (₹)</th>
+              <th>Status</th>
+              <th style="text-align:center;">Gate Check-In</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <tr>
+              <td colspan="10" style="text-align:center; color:var(--m); padding: 2rem;">Loading registrations...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- Detail & Action Modal -->
+  <div class="modal-bg" id="detailModal">
+    <div class="modal">
+      <button class="modal-close" id="closeDetailModal">&times;</button>
+      <div class="modal-title">Pass Booking <span>Details</span></div>
+      <div id="modalDetailContent"></div>
+      <div class="m-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <!-- Spot Registration Modal -->
+  <div class="modal-bg" id="spotModal">
+    <div class="modal">
+      <button class="modal-close" id="closeSpotModal">&times;</button>
+      <div class="modal-title">Spot Gate <span>Registration</span></div>
+      <form id="spotForm" onsubmit="handleSpotSubmit(event)">
+        <div class="spot-form-grid">
+          <div class="form-group-admin">
+            <label for="spotName">Full Name</label>
+            <input type="text" id="spotName" placeholder="Enter attendee name" required>
+          </div>
+
+          <div class="form-group-admin">
+            <label for="spotPhone">WhatsApp / Mobile Number</label>
+            <input type="tel" id="spotPhone" placeholder="Enter 10-digit number" pattern="[0-9]{10}" maxlength="10" required>
+          </div>
+
+          <div class="form-group-admin">
+            <label for="spotTier">Pass Category</label>
+            <select id="spotTier" onchange="recalculateSpotTotal()">
+              <option value="Early Bird Pass" data-price="199">Early Bird Pass (₹199 per person)</option>
+              <option value="General Pass" data-price="249">General Pass (₹249 per person)</option>
+              <option value="On-Day Pass" data-price="299" selected>On-Day Pass (₹299 per person)</option>
+            </select>
+          </div>
+
+          <div class="form-group-admin">
+            <label>Number of Passes (Quantity)</label>
+            <div class="qty-stepper-wrap">
+              <button type="button" class="qty-btn" onclick="adjustSpotQty(-1)" aria-label="Decrease passes">&minus;</button>
+              <div class="qty-display-box">
+                <input type="number" id="spotQty" value="1" min="1" max="20" readonly>
+                <span class="qty-person-label" id="spotQtyLabel">Person (1 Pass)</span>
+              </div>
+              <button type="button" class="qty-btn" onclick="adjustSpotQty(1)" aria-label="Increase passes">&plus;</button>
+            </div>
+          </div>
+
+          <div class="form-group-admin">
+            <label for="spotPayment">Payment Mode</label>
+            <select id="spotPayment">
+              <option value="Cash at Gate">Cash at Counter</option>
+              <option value="UPI / QR Code">UPI / QR Code</option>
+              <option value="Google Pay / PhonePe">Google Pay / PhonePe</option>
+            </select>
+          </div>
+
+          <div class="kv" style="padding:12px; background:rgba(255,222,33,0.06); border-radius:6px; border:1px solid var(--b); margin-top:6px;">
+            <span class="k" style="color:var(--gold-warm); font-weight:700;">Total Payable:</span>
+            <span class="v" id="spotTotalText" style="color:var(--gold); font-size:1.25rem; font-weight:800;">₹299</span>
+          </div>
+
+          <button type="submit" class="btn-m btn-m-appr" style="padding: 12px; margin-top: 10px;">
+            Issue Confirmed Pass
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Firebase App & Cloud Firestore SDKs (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    'use strict';
+
+    // ── Authentication Check ──
+    const authSession = JSON.parse(localStorage.getItem('dandiya_admin_auth') || 'null');
+    if (!authSession) {
+      window.location.href = 'admin-login.html';
+    } else {
+      document.getElementById('adminChip').textContent = `Admin: ${authSession.email || 'Nandhi Youth'}`;
+    }
+
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      localStorage.removeItem('dandiya_admin_auth');
+      window.location.href = 'admin-login.html';
+    });
+
+    // ── Toast Utility ──
+    const toastEl = document.getElementById('toast');
+    let toastTimeout;
+    function showToast(msg, type = 'ok') {
+      toastEl.textContent = msg;
+      toastEl.className = `toast show ${type}`;
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toastEl.className = 'toast';
+      }, 3000);
+    }
+
+    // ── Sample Seed Data ──
+    const initialSeedBookings = [
+      {
+        id: 'DM2-1081',
+        createdAt: '2026-09-27T17:40:00Z',
+        name: 'Ramesh Reddy',
+        phone: '9848012345',
+        passTier: 'Early Bird Pass',
+        pricePerPass: 199,
+        quantity: 2,
+        totalAmount: 398,
+        status: 'Confirmed',
+        attended: true,
+        paymentMode: 'UPI / PhonePe',
+        notes: 'Pre-registered via WhatsApp'
+      },
+      {
+        id: 'DM2-1082',
+        createdAt: '2026-09-27T18:15:00Z',
+        name: 'Ananya Sharma',
+        phone: '9876543210',
+        passTier: 'Early Bird Pass',
+        pricePerPass: 199,
+        quantity: 1,
+        totalAmount: 199,
+        status: 'Confirmed',
+        attended: true,
+        paymentMode: 'Google Pay',
+        notes: 'Family group member'
+      },
+      {
+        id: 'DM2-1083',
+        createdAt: '2026-09-27T18:50:00Z',
+        name: 'Vikram Patel',
+        phone: '9440123456',
+        passTier: 'General Pass',
+        pricePerPass: 249,
+        quantity: 4,
+        totalAmount: 996,
+        status: 'Confirmed',
+        attended: false,
+        paymentMode: 'Online Transfer',
+        notes: 'Traditional attire inquiry'
+      },
+      {
+        id: 'DM2-1084',
+        createdAt: '2026-09-27T19:10:00Z',
+        name: 'Sneha Goud',
+        phone: '9988776655',
+        passTier: 'General Pass',
+        pricePerPass: 249,
+        quantity: 2,
+        totalAmount: 498,
+        status: 'Pending',
+        attended: false,
+        paymentMode: 'Cash at Counter',
+        notes: 'Awaiting payment verification'
+      },
+      {
+        id: 'DM2-1085',
+        createdAt: '2026-09-27T19:35:00Z',
+        name: 'Karthik Rao',
+        phone: '9123456780',
+        passTier: 'On-Day Pass',
+        pricePerPass: 299,
+        quantity: 3,
+        totalAmount: 897,
+        status: 'Pending',
+        attended: false,
+        paymentMode: 'UPI / QR',
+        notes: 'Gate reservation'
+      }
+    ];
+
+    // Load data from Cloud Firestore (real-time live sync) or LocalStorage
+    let registrations = [];
+
+    function loadRegistrations() {
+      if (typeof DandiyaDB !== 'undefined' && DandiyaDB.isCloudActive()) {
+        DandiyaDB.subscribeToBookings((liveList) => {
+          if (liveList && liveList.length > 0) {
+            registrations = liveList;
+          } else {
+            const stored = localStorage.getItem('dandiya_bookings');
+            registrations = stored ? JSON.parse(stored) : initialSeedBookings;
+          }
+          updateStats();
+          renderTable();
+        });
+      } else {
+        const stored = localStorage.getItem('dandiya_bookings');
+        if (stored) {
+          try {
+            registrations = JSON.parse(stored);
+          } catch (e) {
+            registrations = initialSeedBookings;
+          }
+        } else {
+          registrations = initialSeedBookings;
+          saveRegistrations();
+        }
+        updateStats();
+        renderTable();
+      }
+    }
+
+    function saveRegistrations() {
+      localStorage.setItem('dandiya_bookings', JSON.stringify(registrations));
+    }
+
+    // ── Update Dashboard Stats ──
+    function updateStats() {
+      const totalBookings = registrations.length;
+      const totalPasses = registrations.reduce((sum, r) => sum + (parseInt(r.quantity) || 1), 0);
+      const confirmedCount = registrations.filter(r => r.status === 'Confirmed').length;
+      const pendingCount = registrations.filter(r => r.status === 'Pending').length;
+      const attendedCount = registrations.filter(r => r.attended === true).length;
+      const totalRevenue = registrations
+        .filter(r => r.status === 'Confirmed')
+        .reduce((sum, r) => sum + (parseInt(r.totalAmount) || 0), 0);
+
+      document.getElementById('st-total').textContent = totalBookings;
+      document.getElementById('st-passes').textContent = totalPasses;
+      document.getElementById('st-confirmed').textContent = confirmedCount;
+      document.getElementById('st-pending').textContent = pendingCount;
+      document.getElementById('st-attended').textContent = attendedCount;
+    }
+
+    // ── Render Registrations Table ──
+    function renderTable() {
+      const q = document.getElementById('search-input').value.toLowerCase().trim();
+      const statusFilter = document.getElementById('filter-status').value;
+      const tierFilter = document.getElementById('filter-tier').value;
+
+      const filtered = registrations.filter(r => {
+        if (statusFilter && r.status !== statusFilter) return false;
+        if (tierFilter && r.passTier !== tierFilter) return false;
+        if (q) {
+          const haystack = `${r.id} ${r.name} ${r.phone} ${r.passTier} ${r.status}`.toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        return true;
+      });
+
+      const tb = document.getElementById('table-body');
+      if (filtered.length === 0) {
+        tb.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--m); padding:2rem;">No matching pass records found.</td></tr>';
+        return;
+      }
+
+      tb.innerHTML = filtered.map(r => {
+        const dt = new Date(r.createdAt || Date.now());
+        const dateStr = dt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+        const timeStr = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+        let statusBadge = '<span class="badge bg-yellow">Pending</span>';
+        if (r.status === 'Confirmed') {
+          statusBadge = '<span class="badge bg-green">Confirmed</span>';
+        } else if (r.status === 'Cancelled') {
+          statusBadge = '<span class="badge bg-red">Cancelled</span>';
+        } else if (r.status === 'Reserved (Timer)' || r.status === 'Reserved') {
+          statusBadge = '<span class="badge" style="background:rgba(59,130,246,0.18); color:#60a5fa; border:1px solid rgba(59,130,246,0.4);"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#60a5fa; margin-right:4px;"></span>Reserved (Timer)</span>';
+        } else if (r.status === 'Expired') {
+          statusBadge = '<span class="badge" style="background:rgba(255,255,255,0.08); color:var(--m); border:1px solid rgba(255,255,255,0.15);">Expired</span>';
+        }
+
+        const cleanPhone = (r.phone || '').replace(/[^0-9]/g, '');
+        const waMsg = encodeURIComponent(`Hello ${r.name}, this is Nandhi Youth confirming your Navratri Dandiya Mahotsav 2.0 pass (Booking ID: ${r.id}). Tier: ${r.passTier}, Qty: ${r.quantity}. Event: 19 October 2026 at Lakshmi Gardens, Nalagonda.`);
+        const waUrl = `https://api.whatsapp.com/send?phone=91${cleanPhone}&text=${waMsg}`;
+
+        return `
+          <tr>
+            <td style="font-family:monospace; font-weight:700; color:var(--gold);">${r.id}</td>
+            <td style="color:var(--m);">${dateStr}, ${timeStr}</td>
+            <td style="font-weight:700; color:#fff;">${escapeHtml(r.name)}</td>
+            <td>
+              <span>${escapeHtml(r.phone)}</span><br>
+              <a href="${waUrl}" target="_blank" rel="noopener" class="wa-link">Message WhatsApp</a>
+            </td>
+            <td>
+              <span style="font-weight:600; color:#fff;">${escapeHtml(r.passTier)}</span><br>
+              <span style="font-size:0.72rem; color:var(--m);">₹${r.pricePerPass} per person</span>
+            </td>
+            <td style="font-weight:700; text-align:center;">${r.quantity}</td>
+            <td style="font-weight:800; color:var(--gold);">₹${r.totalAmount}</td>
+            <td>${statusBadge}</td>
+            <td class="att-toggle-wrap">
+              <input type="checkbox" class="att-toggle" ${r.attended ? 'checked' : ''} onchange="toggleGateCheckIn('${r.id}', this)" title="${r.attended ? 'Attended' : 'Not Checked In'}">
+            </td>
+            <td>
+              <button class="btn-action" onclick="openDetailModal('${r.id}')">View &amp; Action</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Toggle Gate Check-in
+    window.toggleGateCheckIn = function(id, checkbox) {
+      const isChecked = checkbox.checked;
+      const rec = registrations.find(r => r.id === id);
+      if (rec) {
+        rec.attended = isChecked;
+        if (typeof DandiyaDB !== 'undefined') {
+          DandiyaDB.updateBookingStatus(id, { attended: isChecked });
+        }
+        saveRegistrations();
+        updateStats();
+        showToast(isChecked ? `${rec.name} checked in at gate!` : `${rec.name} check-in reverted`, 'ok');
+      }
+    };
+
+    // ── Detail Modal ──
+    const detailModal = document.getElementById('detailModal');
+    const closeDetailModal = document.getElementById('closeDetailModal');
+
+    window.openDetailModal = function(id) {
+      const r = registrations.find(x => x.id === id);
+      if (!r) return;
+
+      const dt = new Date(r.createdAt || Date.now()).toLocaleString('en-IN');
+      const cleanPhone = (r.phone || '').replace(/[^0-9]/g, '');
+      const waMsg = encodeURIComponent(`Hello ${r.name}, your pass for Navratri Dandiya Mahotsav 2.0 (Booking ID: ${r.id}) has been confirmed. Category: ${r.passTier}, Passes: ${r.quantity}, Total: ₹${r.totalAmount}. Venue: Lakshmi Gardens, Nalagonda on 19 October 2026. Organised by Nandhi Youth.`);
+      const waUrl = `https://api.whatsapp.com/send?phone=91${cleanPhone}&text=${waMsg}`;
+
+      const content = `
+        <div class="kv"><span class="k">Booking ID</span><span class="v" style="font-family:monospace; color:var(--gold); font-weight:800;">${r.id}</span></div>
+        <div class="kv"><span class="k">Date & Time</span><span class="v">${dt}</span></div>
+        <div class="kv"><span class="k">Attendee Name</span><span class="v">${escapeHtml(r.name)}</span></div>
+        <div class="kv"><span class="k">Mobile Number</span><span class="v">${escapeHtml(r.phone)}</span></div>
+        <div class="kv"><span class="k">Pass Category</span><span class="v">${escapeHtml(r.passTier)} (₹${r.pricePerPass} / person)</span></div>
+        <div class="kv"><span class="k">Quantity</span><span class="v">${r.quantity} Pass(es)</span></div>
+        <div class="kv"><span class="k">Total Amount</span><span class="v" style="color:var(--gold); font-size:1.15rem; font-weight:800;">₹${r.totalAmount}</span></div>
+        <div class="kv"><span class="k">Payment Mode</span><span class="v">${escapeHtml(r.paymentMode || 'Cash / Direct WhatsApp')}</span></div>
+        ${r.utrNumber ? `<div class="kv"><span class="k">UPI UTR / Reference</span><span class="v" style="font-family:monospace; color:var(--gold); font-weight:800;">${escapeHtml(r.utrNumber)}</span></div>` : ''}
+        <div class="kv"><span class="k">Booking Status</span><span class="v">${escapeHtml(r.status)}</span></div>
+        <div class="kv"><span class="k">Gate Check-In</span><span class="v" style="color:${r.attended ? '#22c55e' : 'var(--m)'}">${r.attended ? 'Checked In' : 'Not Yet Checked In'}</span></div>
+        ${r.screenshotData ? `<div class="kv" style="flex-direction:column; align-items:flex-start; gap:8px; margin-top:8px;"><span class="k">Payment Screenshot Receipt:</span><img src="${r.screenshotData}" alt="Payment Receipt" style="max-width:100%; max-height:220px; border-radius:6px; border:1px solid var(--b); object-fit:contain;"></div>` : ''}
+        ${r.notes ? `<div class="kv" style="margin-top:6px;"><span class="k">Notes</span><span class="v">${escapeHtml(r.notes)}</span></div>` : ''}
+      `;
+
+      let actionButtons = '';
+      if (r.status !== 'Confirmed') {
+        actionButtons += `<button class="btn-m btn-m-appr" onclick="setRecordStatus('${r.id}', 'Confirmed')">Confirm Pass</button>`;
+      }
+      actionButtons += `<a href="${waUrl}" target="_blank" rel="noopener" class="btn-m btn-m-wa">Send WhatsApp Ticket</a>`;
+      if (r.status !== 'Cancelled') {
+        actionButtons += `<button class="btn-m btn-m-rej" onclick="setRecordStatus('${r.id}', 'Cancelled')">Cancel Pass</button>`;
+      }
+      actionButtons += `<button class="btn-m btn-m-del" onclick="deleteRecord('${r.id}')">Delete</button>`;
+
+      document.getElementById('modalDetailContent').innerHTML = content;
+      document.getElementById('modalActions').innerHTML = actionButtons;
+      detailModal.classList.add('open');
+    };
+
+    closeDetailModal.addEventListener('click', () => detailModal.classList.remove('open'));
+
+    window.setRecordStatus = function(id, newStatus) {
+      const rec = registrations.find(r => r.id === id);
+      if (rec) {
+        rec.status = newStatus;
+        if (typeof DandiyaDB !== 'undefined') {
+          DandiyaDB.updateBookingStatus(id, { status: newStatus });
+        }
+        saveRegistrations();
+        updateStats();
+        renderTable();
+        detailModal.classList.remove('open');
+        showToast(`Booking ${id} marked as ${newStatus}!`, 'ok');
+      }
+    };
+
+    window.deleteRecord = function(id) {
+      if (confirm(`Are you sure you want to delete booking ${id}?`)) {
+        if (typeof DandiyaDB !== 'undefined') {
+          DandiyaDB.deleteBooking(id);
+        }
+        registrations = registrations.filter(r => r.id !== id);
+        saveRegistrations();
+        updateStats();
+        renderTable();
+        detailModal.classList.remove('open');
+        showToast(`Booking ${id} deleted`, 'ok');
+      }
+    };
+
+    // ── Spot Registration Modal ──
+    const spotModal = document.getElementById('spotModal');
+    const closeSpotModal = document.getElementById('closeSpotModal');
+
+    document.querySelectorAll('#btn-open-spot, #btn-add-spot').forEach(btn => {
+      btn.addEventListener('click', () => {
+        recalculateSpotTotal();
+        spotModal.classList.add('open');
+      });
+    });
+
+    closeSpotModal.addEventListener('click', () => spotModal.classList.remove('open'));
+
+    window.adjustSpotQty = function(delta) {
+      const input = document.getElementById('spotQty');
+      let val = parseInt(input.value, 10) || 1;
+      let newVal = val + delta;
+      if (newVal < 1) newVal = 1;
+      if (newVal > 20) newVal = 20;
+      input.value = newVal;
+
+      const label = document.getElementById('spotQtyLabel');
+      if (label) {
+        label.innerText = newVal === 1 ? 'Person (1 Pass)' : `Persons (${newVal} Passes)`;
+      }
+      recalculateSpotTotal();
+    };
+
+    window.recalculateSpotTotal = function() {
+      const tierSelect = document.getElementById('spotTier');
+      const selectedOption = tierSelect.options[tierSelect.selectedIndex];
+      const price = parseInt(selectedOption.getAttribute('data-price')) || 299;
+      const qty = parseInt(document.getElementById('spotQty').value) || 1;
+      const total = price * qty;
+
+      const label = document.getElementById('spotQtyLabel');
+      if (label) {
+        label.innerText = qty === 1 ? 'Person (1 Pass)' : `Persons (${qty} Passes)`;
+      }
+      document.getElementById('spotTotalText').textContent = '₹' + total;
+    };
+
+    window.handleSpotSubmit = function(e) {
+      e.preventDefault();
+      const name = document.getElementById('spotName').value.trim();
+      const phone = document.getElementById('spotPhone').value.trim();
+      const tierSelect = document.getElementById('spotTier');
+      const selectedOption = tierSelect.options[tierSelect.selectedIndex];
+      const passTier = tierSelect.value;
+      const pricePerPass = parseInt(selectedOption.getAttribute('data-price')) || 299;
+      const qty = parseInt(document.getElementById('spotQty').value) || 1;
+      const paymentMode = document.getElementById('spotPayment').value;
+      const totalAmount = pricePerPass * qty;
+
+      const newId = 'DM2-' + Math.floor(1000 + Math.random() * 9000);
+
+      const newRecord = {
+        id: newId,
+        createdAt: new Date().toISOString(),
+        name: name,
+        phone: phone,
+        passTier: passTier,
+        pricePerPass: pricePerPass,
+        quantity: qty,
+        totalAmount: totalAmount,
+        status: 'Confirmed',
+        attended: true,
+        paymentMode: paymentMode,
+        notes: 'Spot Gate Registration'
+      };
+
+      if (typeof DandiyaDB !== 'undefined') {
+        DandiyaDB.saveBooking(newRecord);
+      }
+      registrations.unshift(newRecord);
+      saveRegistrations();
+      updateStats();
+      renderTable();
+
+      document.getElementById('spotForm').reset();
+      spotModal.classList.remove('open');
+      showToast(`Spot Pass Issued: ${newId} for ${name}`, 'ok');
+    };
+
+    // ── Export to Excel (.xlsx) ──
+    document.getElementById('btn-export').addEventListener('click', () => {
+      if (registrations.length === 0) {
+        showToast('No records to export!', 'err');
+        return;
+      }
+
+      const rows = registrations.map(r => ({
+        'Booking ID': r.id,
+        'Booking Date': new Date(r.createdAt || Date.now()).toLocaleString('en-IN'),
+        'Attendee Name': r.name,
+        'Mobile Number': r.phone,
+        'Pass Tier': r.passTier,
+        'Price per Pass (INR)': r.pricePerPass,
+        'Quantity': r.quantity,
+        'Total Amount (INR)': r.totalAmount,
+        'Payment Mode': r.paymentMode || 'N/A',
+        'Status': r.status,
+        'Gate Checked-In': r.attended ? 'Yes' : 'No',
+        'Notes': r.notes || ''
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Dandiya_Registrations');
+      XLSX.writeFile(workbook, 'Navratri_Dandiya_Mahotsav_2.0_Registrations.xlsx');
+
+      showToast('Exported registrations to Excel file!', 'ok');
+    });
+
+    // ── Search & Filter Listeners ──
+    document.getElementById('search-input').addEventListener('input', renderTable);
+    document.getElementById('filter-status').addEventListener('change', renderTable);
+    document.getElementById('filter-tier').addEventListener('change', renderTable);
+    document.getElementById('btn-refresh').addEventListener('click', () => {
+      loadRegistrations();
+      showToast('Data refreshed', 'ok');
+    });
+
+    // ── Reset Sample Data ──
+    document.getElementById('btn-reset-data').addEventListener('click', () => {
+      if (confirm('Reset to standard sample registrations?')) {
+        registrations = [...initialSeedBookings];
+        saveRegistrations();
+        updateStats();
+        renderTable();
+        showToast('Reset to sample data', 'ok');
+      }
+    });
+
+    // Close modals on background click
+    [detailModal, spotModal].forEach(m => {
+      m.addEventListener('click', (e) => {
+        if (e.target === m) m.classList.remove('open');
+      });
+    });
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Initial Load
+    loadRegistrations();
+  </script>
+</body>
+</html>

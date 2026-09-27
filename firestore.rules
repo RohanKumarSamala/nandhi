@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /bookings/{bookingId} {
+      // Allow attendees and admin dashboard to read and write booking records
+      allow read, write: if true;
+    }
+  }
+}
