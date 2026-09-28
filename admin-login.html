@@ -175,21 +175,6 @@
       min-height: 1.2rem;
     }
 
-    .credential-hint {
-      background: rgba(255, 222, 33, 0.05);
-      border: 1px solid rgba(255, 222, 33, 0.15);
-      border-radius: 6px;
-      padding: 10px 12px;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-      margin-top: 1.4rem;
-      line-height: 1.5;
-    }
-
-    .credential-hint strong {
-      color: var(--gold-primary);
-    }
-
     .back-link {
       display: block;
       text-align: center;
@@ -231,12 +216,6 @@
       <div class="err-message" id="loginErrMsg"></div>
     </form>
 
-    <div class="credential-hint">
-      <strong>Default Credentials:</strong><br>
-      Email: <code>admin@nandhiyouth.com</code><br>
-      Password: <code>nandhi2026</code> (or <code>admin123</code>)
-    </div>
-
     <a href="index.html" class="back-link">&larr; Back to event website</a>
   </div>
 
@@ -265,16 +244,16 @@
 
       setTimeout(() => {
         const validUsers = [
-          { email: 'admin@nandhiyouth.com', pass: 'nandhi2026', name: 'Nandhi Youth Admin' },
-          { email: 'shashank@dandiya.com', pass: 'nandhi2026', name: 'Shashank (Coordinator)' },
-          { email: 'abhi@dandiya.com', pass: 'nandhi2026', name: 'Abhi (Coordinator)' },
-          { email: 'admin@tedxsreyas.com', pass: 'admin123', name: 'Administrator' }
+          { email: 'admin@nandhiyouth.com', pass: 'dandiya@2026', name: 'Nandhi Youth Admin' },
+          { email: 'shashank@dandiya.com', pass: 'dandiya@2026', name: 'Shashank (Coordinator)' },
+          { email: 'abhi@dandiya.com', pass: 'dandiya@2026', name: 'Abhi (Coordinator)' },
+          { email: 'admin@tedxsreyas.com', pass: 'dandiya@2026', name: 'Administrator' }
         ];
 
-        const matched = validUsers.find(u => u.email.toLowerCase() === email.toLowerCase() && (password === u.pass || password === 'nandhi2026' || password === 'admin123'));
+        const matched = validUsers.find(u => u.email.toLowerCase() === email.toLowerCase() && (password === u.pass || password === 'dandiya@2026'));
 
-        // Allow any @nandhiyouth.com or master password nandhi2026 / admin123
-        if (matched || password === 'nandhi2026' || password === 'admin123') {
+        // Allow any valid user or master password dandiya@2026
+        if (matched || password === 'dandiya@2026') {
           const authData = {
             email: email,
             name: matched ? matched.name : 'Nandhi Youth Coordinator',
@@ -283,7 +262,7 @@
           localStorage.setItem('dandiya_admin_auth', JSON.stringify(authData));
           window.location.href = 'admin.html';
         } else {
-          errMsg.textContent = 'Invalid credentials. Please use password nandhi2026.';
+          errMsg.textContent = 'Invalid credentials. Please try again.';
           btn.disabled = false;
           btn.textContent = 'Sign In to Dashboard';
         }

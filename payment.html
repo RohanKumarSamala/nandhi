@@ -1089,9 +1089,9 @@
         name: 'Guest Attendee',
         phone: '7799888194',
         passTier: 'Early Bird Pass',
-        pricePerPass: 199,
+        pricePerPass: 200,
         quantity: 1,
-        totalAmount: 199,
+        totalAmount: 200,
         createdAt: new Date().toISOString(),
         expiresAt: Date.now() + 7 * 60 * 1000
       };
@@ -1133,15 +1133,22 @@
       if (isExpired || isSubmitting) return;
       isExpired = true;
 
-      // Update reservation status in LocalStorage if present
-      try {
-        const bookings = JSON.parse(localStorage.getItem('dandiya_bookings') || '[]');
-        const idx = bookings.findIndex(b => b.id === reservationId);
-        if (idx !== -1) {
-          bookings[idx].status = 'Expired';
-          localStorage.setItem('dandiya_bookings', JSON.stringify(bookings));
-        }
-      } catch (e) {}
+      // Update reservation status in Firestore and LocalStorage
+      if (typeof DandiyaDB !== 'undefined') {
+        DandiyaDB.updateBookingStatus(reservationId, {
+          status: 'Expired',
+          notes: 'Reservation hold expired (7-min window completed)'
+        });
+      } else {
+        try {
+          const bookings = JSON.parse(localStorage.getItem('dandiya_bookings') || '[]');
+          const idx = bookings.findIndex(b => b.id === reservationId);
+          if (idx !== -1) {
+            bookings[idx].status = 'Expired';
+            localStorage.setItem('dandiya_bookings', JSON.stringify(bookings));
+          }
+        } catch (e) {}
+      }
 
       sessionStorage.removeItem('dandiya_reservation');
       document.getElementById('overlayExpired').classList.add('active');

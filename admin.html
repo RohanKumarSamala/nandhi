@@ -416,6 +416,17 @@
       border: 1px solid rgba(59, 130, 246, 0.4);
     }
 
+    .bg-gray {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--m);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.8); }
+    }
+
     /* Attendance Toggle Switch */
     .att-toggle-wrap {
       text-align: center;
@@ -872,7 +883,7 @@
 
         <select class="filter-select" id="filter-tier">
           <option value="">All Pass Types</option>
-          <option value="Early Bird Pass">Early Bird Pass (₹199)</option>
+          <option value="Early Bird Pass">Early Bird Pass (₹200)</option>
           <option value="General Pass">General Pass (₹249)</option>
           <option value="On-Day Pass">On-Day Pass (₹299)</option>
         </select>
@@ -939,7 +950,7 @@
           <div class="form-group-admin">
             <label for="spotTier">Pass Category</label>
             <select id="spotTier" onchange="recalculateSpotTotal()">
-              <option value="Early Bird Pass" data-price="199">Early Bird Pass (₹199 per person)</option>
+              <option value="Early Bird Pass" data-price="200">Early Bird Pass (₹200 per person)</option>
               <option value="General Pass" data-price="249">General Pass (₹249 per person)</option>
               <option value="On-Day Pass" data-price="299" selected>On-Day Pass (₹299 per person)</option>
             </select>
@@ -1023,9 +1034,9 @@
         name: 'Ramesh Reddy',
         phone: '9848012345',
         passTier: 'Early Bird Pass',
-        pricePerPass: 199,
+        pricePerPass: 200,
         quantity: 2,
-        totalAmount: 398,
+        totalAmount: 400,
         status: 'Confirmed',
         attended: true,
         paymentMode: 'UPI / PhonePe',
@@ -1037,9 +1048,9 @@
         name: 'Ananya Sharma',
         phone: '9876543210',
         passTier: 'Early Bird Pass',
-        pricePerPass: 199,
+        pricePerPass: 200,
         quantity: 1,
-        totalAmount: 199,
+        totalAmount: 200,
         status: 'Confirmed',
         attended: true,
         paymentMode: 'Google Pay',
@@ -1092,14 +1103,51 @@
     // Load data from Cloud Firestore (real-time live sync) or LocalStorage
     let registrations = [];
 
+    const HOLD_DURATION_MS = 7 * 60 * 1000; // 7 minutes reservation hold
+
+    // Check and automatically transition expired holds to 'Expired' status
+    function checkAndExpireReservations(list) {
+      if (!Array.isArray(list)) return list;
+      const now = Date.now();
+      let hasChanges = false;
+
+      list.forEach(r => {
+        if (r.status === 'Reserved (Timer)' || r.status === 'Reserved') {
+          const createdMs = r.createdAt ? new Date(r.createdAt).getTime() : 0;
+          const expiryMs = r.expiresAt ? Number(r.expiresAt) : (createdMs + HOLD_DURATION_MS);
+
+          // If more than 7 minutes have elapsed, mark Expired
+          if (createdMs > 0 && now >= expiryMs) {
+            r.status = 'Expired';
+            r.notes = r.notes ? (r.notes.includes('expired') ? r.notes : r.notes + ' • 7-min reservation hold expired') : '7-minute reservation hold expired';
+            hasChanges = true;
+
+            // Persist the expired status to Cloud Firestore and LocalStorage
+            if (typeof DandiyaDB !== 'undefined') {
+              DandiyaDB.updateBookingStatus(r.id, {
+                status: 'Expired',
+                notes: r.notes
+              });
+            }
+          }
+        }
+      });
+
+      if (hasChanges) {
+        saveRegistrations();
+      }
+      return list;
+    }
+
     function loadRegistrations() {
       if (typeof DandiyaDB !== 'undefined' && DandiyaDB.isCloudActive()) {
         DandiyaDB.subscribeToBookings((liveList) => {
           if (liveList && liveList.length > 0) {
-            registrations = liveList;
+            registrations = checkAndExpireReservations(liveList);
           } else {
             const stored = localStorage.getItem('dandiya_bookings');
-            registrations = stored ? JSON.parse(stored) : initialSeedBookings;
+            const parsed = stored ? JSON.parse(stored) : initialSeedBookings;
+            registrations = checkAndExpireReservations(parsed);
           }
           updateStats();
           renderTable();
@@ -1108,18 +1156,28 @@
         const stored = localStorage.getItem('dandiya_bookings');
         if (stored) {
           try {
-            registrations = JSON.parse(stored);
+            registrations = checkAndExpireReservations(JSON.parse(stored));
           } catch (e) {
-            registrations = initialSeedBookings;
+            registrations = checkAndExpireReservations(initialSeedBookings);
           }
         } else {
-          registrations = initialSeedBookings;
+          registrations = checkAndExpireReservations(initialSeedBookings);
           saveRegistrations();
         }
         updateStats();
         renderTable();
       }
     }
+
+    // Real-time ticker: checks active holds and updates remaining timer display every 5 seconds
+    setInterval(() => {
+      const hasReserved = registrations.some(r => r.status === 'Reserved (Timer)' || r.status === 'Reserved');
+      if (hasReserved) {
+        checkAndExpireReservations(registrations);
+        updateStats();
+        renderTable();
+      }
+    }, 5000);
 
     function saveRegistrations() {
       localStorage.setItem('dandiya_bookings', JSON.stringify(registrations));
@@ -1176,9 +1234,20 @@
         } else if (r.status === 'Cancelled') {
           statusBadge = '<span class="badge bg-red">Cancelled</span>';
         } else if (r.status === 'Reserved (Timer)' || r.status === 'Reserved') {
-          statusBadge = '<span class="badge" style="background:rgba(59,130,246,0.18); color:#60a5fa; border:1px solid rgba(59,130,246,0.4);"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#60a5fa; margin-right:4px;"></span>Reserved (Timer)</span>';
+          const createdMs = r.createdAt ? new Date(r.createdAt).getTime() : 0;
+          const expiryMs = r.expiresAt ? Number(r.expiresAt) : (createdMs + HOLD_DURATION_MS);
+          const remainingSecs = Math.round((expiryMs - Date.now()) / 1000);
+
+          if (remainingSecs <= 0) {
+            statusBadge = '<span class="badge" style="background:rgba(239,68,68,0.12); color:#f87171; border:1px solid rgba(239,68,68,0.3);"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#ef4444; margin-right:4px;"></span>Expired</span>';
+          } else {
+            const mins = Math.floor(remainingSecs / 60);
+            const secs = remainingSecs % 60;
+            const timeTxt = `${mins}:${String(secs).padStart(2, '0')}`;
+            statusBadge = `<span class="badge" style="background:rgba(59,130,246,0.18); color:#60a5fa; border:1px solid rgba(59,130,246,0.4);" title="Reservation hold active: ${timeTxt} remaining"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#60a5fa; margin-right:4px; animation: pulseDot 1.2s infinite ease-in-out;"></span>Reserved (${timeTxt})</span>`;
+          }
         } else if (r.status === 'Expired') {
-          statusBadge = '<span class="badge" style="background:rgba(255,255,255,0.08); color:var(--m); border:1px solid rgba(255,255,255,0.15);">Expired</span>';
+          statusBadge = '<span class="badge" style="background:rgba(239,68,68,0.12); color:#f87171; border:1px solid rgba(239,68,68,0.3);"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#ef4444; margin-right:4px;"></span>Expired</span>';
         }
 
         const cleanPhone = (r.phone || '').replace(/[^0-9]/g, '');
