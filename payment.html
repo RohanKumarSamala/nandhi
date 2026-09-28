@@ -531,6 +531,11 @@
       background: rgba(255, 222, 33, 0.06);
     }
 
+    .screenshot-drop-zone.has-error {
+      border-color: var(--red-urgent);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
     .screenshot-drop-zone input[type="file"] {
       position: absolute;
       inset: 0;
@@ -944,7 +949,7 @@
 
         <!-- Screenshot Upload Zone -->
         <div class="form-row">
-          <label>Payment Screenshot / Receipt (Optional)</label>
+          <label for="screenshotInput">Payment Screenshot / Receipt *</label>
           <div class="screenshot-drop-zone" id="screenshotDropZone">
             <input type="file" id="screenshotInput" accept="image/jpeg,image/png,image/webp">
             <div class="upload-svg-icon">
@@ -955,7 +960,7 @@
               </svg>
             </div>
             <div class="upload-prompt-text">
-              <strong>Click or drag payment screenshot here</strong><br>
+              <strong>Click or drag payment screenshot here *</strong><br>
               JPG, PNG, or WEBP (Max 5 MB)
             </div>
             <img id="previewThumbnail" class="preview-thumbnail" alt="Screenshot preview">
@@ -1014,7 +1019,6 @@
       </p>
       <div class="overlay-btn-group">
         <a href="index.html" class="btn-overlay-primary">Return to Homepage</a>
-        <a href="admin.html" class="btn-overlay-secondary">View Admin Dashboard</a>
       </div>
     </div>
   </div>
@@ -1192,11 +1196,23 @@
 
     fileInput.addEventListener('change', () => {
       const file = fileInput.files[0];
-      if (!file) return;
+      if (!file) {
+        uploadedScreenshotBase64 = null;
+        previewImg.src = '';
+        previewImg.style.display = 'none';
+        fileNameDisplay.textContent = '';
+        fileNameDisplay.style.display = 'none';
+        return;
+      }
 
       if (file.size > 5 * 1024 * 1024) {
         showToast('Screenshot file exceeds 5 MB. Please select a smaller image.');
         fileInput.value = '';
+        uploadedScreenshotBase64 = null;
+        previewImg.src = '';
+        previewImg.style.display = 'none';
+        fileNameDisplay.textContent = '';
+        fileNameDisplay.style.display = 'none';
         return;
       }
 
@@ -1208,6 +1224,8 @@
         uploadedScreenshotBase64 = e.target.result;
         previewImg.src = e.target.result;
         previewImg.style.display = 'block';
+        document.getElementById('errScreenshot').classList.remove('show');
+        dropZone.classList.remove('has-error');
       };
       reader.readAsDataURL(file);
     });
@@ -1271,8 +1289,15 @@
         errUtr.classList.remove('show');
       }
 
-      // Screenshot is optional, but UTR is required
-      errSs.classList.remove('show');
+      // Screenshot is required
+      if (!uploadedScreenshotBase64 && (!fileInput.files || fileInput.files.length === 0)) {
+        errSs.classList.add('show');
+        dropZone.classList.add('has-error');
+        isValid = false;
+      } else {
+        errSs.classList.remove('show');
+        dropZone.classList.remove('has-error');
+      }
 
       if (!isValid) return;
 
