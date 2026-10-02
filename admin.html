@@ -499,6 +499,93 @@
       text-decoration: underline;
     }
 
+    .wa-row-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      background: rgba(37, 211, 102, 0.12);
+      border: 1px solid rgba(37, 211, 102, 0.4);
+      color: #25D366;
+      font-size: 0.73rem;
+      font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 4px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .wa-row-btn:hover {
+      background: #25D366;
+      color: #0c1e11;
+      border-color: #25D366;
+      box-shadow: 0 2px 8px rgba(37, 211, 102, 0.35);
+    }
+
+    .pass-preview-box {
+      margin-top: 14px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(212, 160, 23, 0.35);
+      border-radius: 8px;
+    }
+
+    .pass-preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .pass-preview-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pass-preview-img {
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: block;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .pass-quick-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-pass-sub {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #fff;
+      font-size: 0.74rem;
+      padding: 5px 11px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .btn-pass-sub:hover {
+      background: rgba(212, 160, 23, 0.18);
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
     /* ── Modals ── */
     .modal-bg {
       position: fixed;
@@ -1250,9 +1337,9 @@
           statusBadge = '<span class="badge" style="background:rgba(239,68,68,0.12); color:#f87171; border:1px solid rgba(239,68,68,0.3);"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#ef4444; margin-right:4px;"></span>Expired</span>';
         }
 
-        const cleanPhone = (r.phone || '').replace(/[^0-9]/g, '');
-        const waMsg = encodeURIComponent(`Hello ${r.name}, this is Nandhi Youth confirming your Navratri Dandiya Mahotsav 2.0 pass (Booking ID: ${r.id}). Tier: ${r.passTier}, Qty: ${r.quantity}. Event: 19 October 2026 at Lakshmi Gardens, Nalagonda.`);
-        const waUrl = `https://api.whatsapp.com/send?phone=91${cleanPhone}&text=${waMsg}`;
+        const fullPhone = formatWhatsAppPhone(r.phone);
+        const msgText = getTicketMessageText(r);
+        const waUrl = fullPhone ? `https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodeURIComponent(msgText)}` : '#';
 
         return `
           <tr>
@@ -1261,7 +1348,7 @@
             <td style="font-weight:700; color:#fff;">${escapeHtml(r.name)}</td>
             <td>
               <span>${escapeHtml(r.phone)}</span><br>
-              <a href="${waUrl}" target="_blank" rel="noopener" class="wa-link">Message WhatsApp</a>
+              <a href="${waUrl}" target="_blank" rel="noopener" class="wa-row-btn" onclick="sendWhatsAppTicket('${r.id}', event)" title="Direct WhatsApp to ${fullPhone} with drafted ticket pass">📲 WhatsApp Pass</a>
             </td>
             <td>
               <span style="font-weight:600; color:#fff;">${escapeHtml(r.passTier)}</span><br>
@@ -1281,6 +1368,18 @@
       }).join('');
     }
 
+    // Format phone number cleanly with 91 country code for direct WhatsApp redirection
+    function formatWhatsAppPhone(phone) {
+      let clean = (phone || '').replace(/[^0-9]/g, '');
+      if (clean.startsWith('0') && clean.length === 11) {
+        clean = clean.substring(1);
+      }
+      if (clean.length === 10) {
+        return '91' + clean;
+      }
+      return clean;
+    }
+
     // Toggle Gate Check-in
     window.toggleGateCheckIn = function(id, checkbox) {
       const isChecked = checkbox.checked;
@@ -1296,6 +1395,94 @@
       }
     };
 
+    // ── Helper to format ticket text message ──
+    function getTicketMessageText(r) {
+      const bannerUrl = (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1'))
+        ? 'https://nandhi-2960d.web.app/images/ticket-banner.png'
+        : `${window.location.origin}/images/ticket-banner.png`;
+
+      return `🎉 *NAVRATRI DANDIYA MAHOTSAV 2.0* 🎉\n` +
+        `*THE ORIGINAL DANDIYA EXPERIENCE RETURNS*\n` +
+        `*Organised by Nandhi Youth*\n\n` +
+        `Hello *${r.name}*,\n` +
+        `Your entry pass has been *CONFIRMED*! Here are your ticket details:\n\n` +
+        `🎫 *Booking ID:* ${r.id}\n` +
+        `⭐ *Pass Category:* ${r.passTier}\n` +
+        `👥 *Pass Count:* ${r.quantity} Person(s)\n` +
+        `💰 *Total Paid:* ₹${r.totalAmount}\n` +
+        `📅 *Event Date:* 19 October 2026 (Starts at 5:00 PM)\n` +
+        `📍 *Venue:* Lakshmi Gardens, Nalagonda\n\n` +
+        `🎟️ *Official Pass Photo Banner:*\n${bannerUrl}\n\n` +
+        `⚠️ *Gate Entry Guidelines:*\n` +
+        `• Present this WhatsApp confirmation message and photo pass at the entry gate.\n` +
+        `• Entry starts strictly at 5:00 PM.\n` +
+        `• Traditional Dandiya dress code welcomed.\n` +
+        `• Food & beverage stalls, live DJ sound, and Garba dance inside.\n\n` +
+        `See you on the dance floor! 💃🕺✨`;
+    }
+
+    // ── Direct Redirect to WhatsApp Phone Number with Draft Message & Photo ──
+    window.sendWhatsAppTicket = function(id, e) {
+      const r = registrations.find(x => x.id === id);
+      if (!r) return;
+      const fullPhone = formatWhatsAppPhone(r.phone);
+      if (!fullPhone) {
+        if (e) e.preventDefault();
+        showToast('No phone number found for this booking!', 'err');
+        return;
+      }
+      const msgText = getTicketMessageText(r);
+      const waUrl = `https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodeURIComponent(msgText)}`;
+
+      // Copy banner photo to clipboard in background so sender can press Ctrl+V / Paste if desired
+      if (navigator.clipboard && window.ClipboardItem) {
+        fetch('images/ticket-banner.png')
+          .then(res => res.blob())
+          .then(blob => {
+            navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).catch(() => {});
+          })
+          .catch(() => {});
+      }
+
+      showToast(`Redirecting to WhatsApp (+${fullPhone})...`, 'ok');
+
+      // If clicked from element without native href navigation, open window directly
+      if (!e || !e.currentTarget || !e.currentTarget.href || e.currentTarget.getAttribute('href') === '#') {
+        if (e) e.preventDefault();
+        const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
+        if (!win) window.location.href = waUrl;
+      }
+    };
+
+    // ── Quick Copy Photo & Message ──
+    window.copyPassBannerPhoto = async function() {
+      try {
+        const resp = await fetch('images/ticket-banner.png');
+        const blob = await resp.blob();
+        if (navigator.clipboard && window.ClipboardItem) {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]);
+          showToast('📸 Pass photo copied to clipboard! Paste (Ctrl+V) anywhere.', 'ok');
+        } else {
+          showToast('Please use "Download Banner" button.', 'err');
+        }
+      } catch (e) {
+        showToast('Could not copy image automatically. Use Download button.', 'err');
+      }
+    };
+
+    window.copyTicketMessage = function(id) {
+      const r = registrations.find(x => x.id === id);
+      if (!r) return;
+      const msgText = getTicketMessageText(r);
+      navigator.clipboard.writeText(msgText).then(() => {
+        showToast('📝 Ticket message copied to clipboard!', 'ok');
+      }).catch(() => {
+        showToast('Failed to copy text', 'err');
+      });
+    };
+
     // ── Detail Modal ──
     const detailModal = document.getElementById('detailModal');
     const closeDetailModal = document.getElementById('closeDetailModal');
@@ -1305,9 +1492,9 @@
       if (!r) return;
 
       const dt = new Date(r.createdAt || Date.now()).toLocaleString('en-IN');
-      const cleanPhone = (r.phone || '').replace(/[^0-9]/g, '');
-      const waMsg = encodeURIComponent(`Hello ${r.name}, your pass for Navratri Dandiya Mahotsav 2.0 (Booking ID: ${r.id}) has been confirmed. Category: ${r.passTier}, Passes: ${r.quantity}, Total: ₹${r.totalAmount}. Venue: Lakshmi Gardens, Nalagonda on 19 October 2026. Organised by Nandhi Youth.`);
-      const waUrl = `https://api.whatsapp.com/send?phone=91${cleanPhone}&text=${waMsg}`;
+      const fullPhone = formatWhatsAppPhone(r.phone);
+      const msgText = getTicketMessageText(r);
+      const waUrl = fullPhone ? `https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodeURIComponent(msgText)}` : '#';
 
       const content = `
         <div class="kv"><span class="k">Booking ID</span><span class="v" style="font-family:monospace; color:var(--gold); font-weight:800;">${r.id}</span></div>
@@ -1323,13 +1510,36 @@
         <div class="kv"><span class="k">Gate Check-In</span><span class="v" style="color:${r.attended ? '#22c55e' : 'var(--m)'}">${r.attended ? 'Checked In' : 'Not Yet Checked In'}</span></div>
         ${r.screenshotData ? `<div class="kv" style="flex-direction:column; align-items:flex-start; gap:8px; margin-top:8px;"><span class="k">Payment Screenshot Receipt:</span><img src="${r.screenshotData}" alt="Payment Receipt" style="max-width:100%; max-height:220px; border-radius:6px; border:1px solid var(--b); object-fit:contain;"></div>` : ''}
         ${r.notes ? `<div class="kv" style="margin-top:6px;"><span class="k">Notes</span><span class="v">${escapeHtml(r.notes)}</span></div>` : ''}
+
+        <!-- Official Event Pass Banner Preview & Actions -->
+        <div class="pass-preview-box">
+          <div class="pass-preview-header">
+            <div class="pass-preview-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Official Event Pass Banner
+            </div>
+            <span style="font-size:0.72rem; color:var(--gold); font-weight:700;">NANDHI YOUTH 2.0</span>
+          </div>
+          <img src="images/ticket-banner.png" alt="Official Dandiya Pass Banner" class="pass-preview-img" id="ticketBannerPreview">
+          <div class="pass-quick-actions">
+            <button type="button" class="btn-pass-sub" onclick="copyPassBannerPhoto()">
+              📋 Copy Photo
+            </button>
+            <a href="images/ticket-banner.png" download="Dandiya-Pass-${r.id}.png" class="btn-pass-sub">
+              📥 Download Banner
+            </a>
+            <button type="button" class="btn-pass-sub" onclick="copyTicketMessage('${r.id}')">
+              📝 Copy Text Msg
+            </button>
+          </div>
+        </div>
       `;
 
       let actionButtons = '';
       if (r.status !== 'Confirmed') {
         actionButtons += `<button class="btn-m btn-m-appr" onclick="setRecordStatus('${r.id}', 'Confirmed')">Confirm Pass</button>`;
       }
-      actionButtons += `<a href="${waUrl}" target="_blank" rel="noopener" class="btn-m btn-m-wa">Send WhatsApp Ticket</a>`;
+      actionButtons += `<a href="${waUrl}" target="_blank" rel="noopener" class="btn-m btn-m-wa" onclick="sendWhatsAppTicket('${r.id}', event)">📲 Send WhatsApp Ticket</a>`;
       if (r.status !== 'Cancelled') {
         actionButtons += `<button class="btn-m btn-m-rej" onclick="setRecordStatus('${r.id}', 'Cancelled')">Cancel Pass</button>`;
       }

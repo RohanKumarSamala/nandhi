@@ -244,16 +244,16 @@
 
       setTimeout(() => {
         const validUsers = [
-          { email: 'admin@nandhiyouth.com', pass: 'dandiya@2026', name: 'Nandhi Youth Admin' },
-          { email: 'shashank@dandiya.com', pass: 'dandiya@2026', name: 'Shashank (Coordinator)' },
-          { email: 'abhi@dandiya.com', pass: 'dandiya@2026', name: 'Abhi (Coordinator)' },
-          { email: 'admin@tedxsreyas.com', pass: 'dandiya@2026', name: 'Administrator' }
+          { email: 'admin@nandhiyouth.com', pass: 'nandhi@2026', name: 'Nandhi Youth Admin' },
+          { email: 'shashank@dandiya.com', pass: 'nandhi@2026', name: 'Shashank (Coordinator)' },
+          { email: 'abhi@dandiya.com', pass: 'nandhi@2026', name: 'Abhi (Coordinator)' },
+          { email: 'admin@tedxsreyas.com', pass: 'nandhi@2026', name: 'Administrator' }
         ];
 
-        const matched = validUsers.find(u => u.email.toLowerCase() === email.toLowerCase() && (password === u.pass || password === 'dandiya@2026'));
+        const matched = validUsers.find(u => u.email.toLowerCase() === email.toLowerCase() && (password === u.pass || password === 'nandhi@2026'));
 
-        // Allow any valid user or master password dandiya@2026
-        if (matched || password === 'dandiya@2026') {
+        // Allow any valid user or master password nandhi@2026
+        if (matched || password === 'nandhi@2026') {
           const authData = {
             email: email,
             name: matched ? matched.name : 'Nandhi Youth Coordinator',
