@@ -626,10 +626,13 @@
         expiresAt: expiresAt
       };
 
-      // 1. Store in sessionStorage for payment.html countdown timer
-      sessionStorage.setItem('dandiya_reservation', JSON.stringify(reservationData));
+      // 1. Store in sessionStorage for payment.html countdown timer (SafeSession handles iOS Private Mode)
+      const _ss = (typeof SafeSession !== 'undefined') ? SafeSession : {
+        setItem: (k, v) => { try { sessionStorage.setItem(k, v); } catch(e) {} }
+      };
+      _ss.setItem('dandiya_reservation', JSON.stringify(reservationData));
 
-      // 2. Sync reservation hold to Cloud Firestore and LocalStorage
+      // 2. Sync reservation hold to Cloud Firestore and SafeStorage
       const newHold = {
         id: resId,
         createdAt: reservationData.createdAt,
@@ -650,9 +653,13 @@
         DandiyaDB.saveBooking(newHold);
       } else {
         try {
-          const existing = JSON.parse(localStorage.getItem('dandiya_bookings') || '[]');
+          const _ls = (typeof SafeStorage !== 'undefined') ? SafeStorage : {
+            getItem: (k) => { try { return localStorage.getItem(k); } catch(e) { return null; } },
+            setItem: (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} }
+          };
+          const existing = JSON.parse(_ls.getItem('dandiya_bookings') || '[]');
           existing.unshift(newHold);
-          localStorage.setItem('dandiya_bookings', JSON.stringify(existing));
+          _ls.setItem('dandiya_bookings', JSON.stringify(existing));
         } catch (err) {
           console.error('Local reservation store error', err);
         }

@@ -11,6 +11,93 @@ const firebaseConfig = {
   measurementId: "G-9QPB3X427B"
 };
 
+// ── Safe Storage Layer (iOS Safari / Private Browsing compatible) ──
+// iOS Safari in Private Browsing throws SecurityError on any localStorage/sessionStorage access.
+// This wrapper catches all errors and falls back to an in-memory store so the app keeps working.
+const _memStore = {};
+const SafeStorage = {
+  _isAvailable: null,
+
+  _check: function () {
+    if (this._isAvailable !== null) return this._isAvailable;
+    try {
+      const testKey = '__dandiya_test__';
+      localStorage.setItem(testKey, '1');
+      localStorage.removeItem(testKey);
+      this._isAvailable = true;
+    } catch (e) {
+      this._isAvailable = false;
+      console.warn('[SafeStorage] localStorage unavailable (iOS Private Mode?). Using in-memory fallback.');
+    }
+    return this._isAvailable;
+  },
+
+  getItem: function (key) {
+    if (this._check()) {
+      try { return localStorage.getItem(key); } catch (e) { return _memStore[key] || null; }
+    }
+    return _memStore[key] !== undefined ? _memStore[key] : null;
+  },
+
+  setItem: function (key, value) {
+    if (this._check()) {
+      try { localStorage.setItem(key, value); } catch (e) { _memStore[key] = value; }
+    } else {
+      _memStore[key] = value;
+    }
+  },
+
+  removeItem: function (key) {
+    if (this._check()) {
+      try { localStorage.removeItem(key); } catch (e) { delete _memStore[key]; }
+    } else {
+      delete _memStore[key];
+    }
+  }
+};
+
+const _ssMemStore = {};
+const SafeSession = {
+  _isAvailable: null,
+
+  _check: function () {
+    if (this._isAvailable !== null) return this._isAvailable;
+    try {
+      const testKey = '__dandiya_ss_test__';
+      sessionStorage.setItem(testKey, '1');
+      sessionStorage.removeItem(testKey);
+      this._isAvailable = true;
+    } catch (e) {
+      this._isAvailable = false;
+      console.warn('[SafeSession] sessionStorage unavailable (iOS Private Mode?). Using in-memory fallback.');
+    }
+    return this._isAvailable;
+  },
+
+  getItem: function (key) {
+    if (this._check()) {
+      try { return sessionStorage.getItem(key); } catch (e) { return _ssMemStore[key] || null; }
+    }
+    return _ssMemStore[key] !== undefined ? _ssMemStore[key] : null;
+  },
+
+  setItem: function (key, value) {
+    if (this._check()) {
+      try { sessionStorage.setItem(key, value); } catch (e) { _ssMemStore[key] = value; }
+    } else {
+      _ssMemStore[key] = value;
+    }
+  },
+
+  removeItem: function (key) {
+    if (this._check()) {
+      try { sessionStorage.removeItem(key); } catch (e) { delete _ssMemStore[key]; }
+    } else {
+      delete _ssMemStore[key];
+    }
+  }
+};
+
 // Check if Firebase credentials have been configured
 const isFirebaseConfigured = firebaseConfig.apiKey !== "YOUR_API_KEY" && firebaseConfig.projectId !== "YOUR_PROJECT_ID";
 
@@ -47,18 +134,18 @@ const DandiyaDB = {
   saveBooking: async (bookingData) => {
     const docId = bookingData.id || bookingData.reservationId;
 
-    // A. Always save to LocalStorage for instant UI responsiveness & offline support
+    // A. Always save to SafeStorage for instant UI responsiveness & offline/iOS support
     try {
-      const local = JSON.parse(localStorage.getItem('dandiya_bookings') || '[]');
+      const local = JSON.parse(SafeStorage.getItem('dandiya_bookings') || '[]');
       const idx = local.findIndex(b => (b.id || b.reservationId) === docId);
       if (idx !== -1) {
         local[idx] = { ...local[idx], ...bookingData };
       } else {
         local.unshift(bookingData);
       }
-      localStorage.setItem('dandiya_bookings', JSON.stringify(local));
+      SafeStorage.setItem('dandiya_bookings', JSON.stringify(local));
     } catch (e) {
-      console.error('LocalStorage write error:', e);
+      console.error('SafeStorage write error:', e);
     }
 
     // B. If Firebase is connected, sync to Firestore collection 'bookings'
@@ -81,12 +168,12 @@ const DandiyaDB = {
         snap.forEach(doc => list.push(doc.data()));
         return list;
       } catch (err) {
-        console.warn('[Firebase] Firestore fetch failed, falling back to LocalStorage:', err);
+        console.warn('[Firebase] Firestore fetch failed, falling back to SafeStorage:', err);
       }
     }
     // Fallback
     try {
-      return JSON.parse(localStorage.getItem('dandiya_bookings') || '[]');
+      return JSON.parse(SafeStorage.getItem('dandiya_bookings') || '[]');
     } catch (e) {
       return [];
     }
@@ -100,29 +187,37 @@ const DandiyaDB = {
         .onSnapshot((snapshot) => {
           const list = [];
           snapshot.forEach(doc => list.push(doc.data()));
-          // Mirror to localStorage
-          localStorage.setItem('dandiya_bookings', JSON.stringify(list));
+          // Mirror to SafeStorage (handles iOS Private Mode gracefully)
+          try { SafeStorage.setItem('dandiya_bookings', JSON.stringify(list)); } catch (e) {}
           callback(list);
         }, (err) => {
           console.warn('[Firebase] Realtime listener error, falling back to local:', err);
-          callback(JSON.parse(localStorage.getItem('dandiya_bookings') || '[]'));
+          try {
+            callback(JSON.parse(SafeStorage.getItem('dandiya_bookings') || '[]'));
+          } catch (e) {
+            callback([]);
+          }
         });
     }
 
-    // LocalStorage fallback poll / instant callback
-    callback(JSON.parse(localStorage.getItem('dandiya_bookings') || '[]'));
+    // SafeStorage fallback poll / instant callback
+    try {
+      callback(JSON.parse(SafeStorage.getItem('dandiya_bookings') || '[]'));
+    } catch (e) {
+      callback([]);
+    }
     return () => {};
   },
 
   // 4. Update status (e.g., 'Confirmed', 'Rejected', 'Attended')
   updateBookingStatus: async (docId, updates) => {
-    // LocalStorage update
+    // SafeStorage update
     try {
-      const local = JSON.parse(localStorage.getItem('dandiya_bookings') || '[]');
+      const local = JSON.parse(SafeStorage.getItem('dandiya_bookings') || '[]');
       const idx = local.findIndex(b => (b.id || b.reservationId) === docId);
       if (idx !== -1) {
         local[idx] = { ...local[idx], ...updates };
-        localStorage.setItem('dandiya_bookings', JSON.stringify(local));
+        SafeStorage.setItem('dandiya_bookings', JSON.stringify(local));
       }
     } catch (e) {}
 
@@ -139,11 +234,11 @@ const DandiyaDB = {
 
   // 5. Delete booking
   deleteBooking: async (docId) => {
-    // LocalStorage delete
+    // SafeStorage delete
     try {
-      const local = JSON.parse(localStorage.getItem('dandiya_bookings') || '[]');
+      const local = JSON.parse(SafeStorage.getItem('dandiya_bookings') || '[]');
       const filtered = local.filter(b => (b.id || b.reservationId) !== docId);
-      localStorage.setItem('dandiya_bookings', JSON.stringify(filtered));
+      SafeStorage.setItem('dandiya_bookings', JSON.stringify(filtered));
     } catch (e) {}
 
     // Firestore delete
@@ -161,3 +256,5 @@ const DandiyaDB = {
 // Export to window
 window.firebaseConfig = firebaseConfig;
 window.DandiyaDB = DandiyaDB;
+window.SafeStorage = SafeStorage;
+window.SafeSession = SafeSession;
