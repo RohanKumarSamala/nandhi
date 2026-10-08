@@ -218,7 +218,7 @@
             <div class="section-subtitle-sm">PASS PRICING SCHEDULE</div>
             <h2 class="section-title-sm">Event Pricing &amp; Phasing</h2>
             <p class="section-desc-sm">
-              Ticket pricing is strictly scheduled by booking dates: Early Bird tickets are ₹200 until 5th October 2026, General tickets are ₹249 after 5th October, and On-Day tickets are ₹299 for same-day entry.
+              Ticket pricing is strictly scheduled by booking dates: Early Bird tickets are ₹200 until 5th October 2026, General tickets are ₹250 after 5th October, and On-Day tickets are ₹299 for same-day entry.
             </p>
           </div>
 
@@ -285,14 +285,14 @@
 
               <div class="pass-card-big-price-wrap">
                 <div class="pass-card-big-price">
-                  ₹249 <span>per person</span>
+                  ₹250 <span>per person</span>
                 </div>
               </div>
 
               <div class="pass-card-big-features">
                 <div class="pass-card-big-feature">
                   <span class="feature-tick">&#10003;</span>
-                  Price: ₹249 per person
+                  Price: ₹250 per person
                 </div>
                 <div class="pass-card-big-feature">
                   <span class="feature-tick">&#10003;</span>
@@ -317,7 +317,7 @@
               </div>
 
               <div class="pass-card-big-status" id="statusPillGeneral">
-                AVAILABLE AFTER 5TH OCT 2026 (₹249)
+                AVAILABLE AFTER 5TH OCT 2026 (₹250)
               </div>
             </div>
 
@@ -472,7 +472,7 @@
   <script>
     // Strict calendar-based pricing engine per requirements:
     // 1. Before Oct 5, 2026: 200 (Early Bird Pass)
-    // 2. From Oct 5, 2026 to Oct 18, 2026: 249 (General Pass)
+    // 2. From Oct 5, 2026 to Oct 18, 2026: 250 (General Pass)
     // 3. On Event Day (19 Oct 2026 onwards): 299 (On-Day Pass)
     function getCalendarPricing() {
       const now = new Date();
@@ -491,7 +491,7 @@
       } else if (now < oct19) {
         return {
           tierName: 'General Pass',
-          price: 249,
+          price: 250,
           badgeText: 'ACTIVE NOW',
           validityText: 'Available after 5th October 2026 &bull; Full Garba &amp; Dandiya arena access',
           activeCardId: 'cardGeneral'
@@ -547,11 +547,11 @@
       if (pillEarly && pillGeneral && pillOnDay) {
         if (activeTier.activeCardId === 'cardEarlyBird') {
           pillEarly.innerHTML = '<span class="status-dot"></span>CURRENT ACTIVE PRICE (₹200)';
-          pillGeneral.innerHTML = 'AVAILABLE AFTER 5TH OCT 2026 (₹249)';
+          pillGeneral.innerHTML = 'AVAILABLE AFTER 5TH OCT 2026 (₹250)';
           pillOnDay.innerHTML = 'AVAILABLE ON 19TH OCT 2026 (₹299)';
         } else if (activeTier.activeCardId === 'cardGeneral') {
           pillEarly.innerHTML = 'PHASE CONCLUDED (ENDED 5TH OCT)';
-          pillGeneral.innerHTML = '<span class="status-dot"></span>CURRENT ACTIVE PRICE (₹249)';
+          pillGeneral.innerHTML = '<span class="status-dot"></span>CURRENT ACTIVE PRICE (₹250)';
           pillOnDay.innerHTML = 'AVAILABLE ON 19TH OCT 2026 (₹299)';
         } else {
           pillEarly.innerHTML = 'PHASE CONCLUDED (ENDED 5TH OCT)';
