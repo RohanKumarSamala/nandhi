@@ -1050,7 +1050,7 @@
   <!-- Firebase App & Cloud Firestore SDKs (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="firebase-config.js"></script>
+  <script src="firebase-config.js?v=2"></script>
 
   <script>
     'use strict';
@@ -1212,6 +1212,42 @@
     const previewImg = document.getElementById('previewThumbnail');
     const fileNameDisplay = document.getElementById('uploadedFileName');
     let uploadedScreenshotBase64 = null;
+    let screenshotReady = Promise.resolve();
+
+    // Downscale + re-encode the receipt as JPEG until it fits comfortably inside a Firestore document
+    const MAX_SCREENSHOT_CHARS = 600 * 1024;
+    function compressScreenshot(dataUrl) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            let maxSide = 1280;
+            let quality = 0.75;
+            let out = null;
+            for (let attempt = 0; attempt < 6; attempt++) {
+              const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+              const c = document.createElement('canvas');
+              c.width = Math.max(1, Math.round(img.width * scale));
+              c.height = Math.max(1, Math.round(img.height * scale));
+              const cctx = c.getContext('2d');
+              cctx.fillStyle = '#ffffff';
+              cctx.fillRect(0, 0, c.width, c.height);
+              cctx.drawImage(img, 0, 0, c.width, c.height);
+              out = c.toDataURL('image/jpeg', quality);
+              if (out.length <= MAX_SCREENSHOT_CHARS) break;
+              maxSide = Math.round(maxSide * 0.75);
+              quality = Math.max(0.4, quality - 0.1);
+            }
+            resolve(out && out.length <= MAX_SCREENSHOT_CHARS ? out : null);
+          } catch (err) {
+            console.error('Screenshot compression error', err);
+            resolve(null);
+          }
+        };
+        img.onerror = () => resolve(null);
+        img.src = dataUrl;
+      });
+    }
 
     fileInput.addEventListener('change', () => {
       const file = fileInput.files[0];
@@ -1240,11 +1276,15 @@
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        uploadedScreenshotBase64 = e.target.result;
         previewImg.src = e.target.result;
         previewImg.style.display = 'block';
         document.getElementById('errScreenshot').classList.remove('show');
         dropZone.classList.remove('has-error');
+
+        // Firestore rejects documents over 1 MB, so shrink the receipt before it is stored
+        screenshotReady = compressScreenshot(e.target.result).then((compressed) => {
+          uploadedScreenshotBase64 = compressed;
+        });
       };
       reader.readAsDataURL(file);
     });
@@ -1327,6 +1367,7 @@
 
       // Save verified payment entry to Cloud Firestore & LocalStorage
       setTimeout(async () => {
+        await screenshotReady;
         const confirmedRecord = {
           id: reservationId,
           createdAt: reservation.createdAt || new Date().toISOString(),
@@ -1346,7 +1387,20 @@
         };
 
         if (typeof DandiyaDB !== 'undefined') {
-          await DandiyaDB.saveBooking(confirmedRecord);
+          let saved = await DandiyaDB.saveBooking(confirmedRecord);
+          if (!saved && confirmedRecord.screenshotData) {
+            // Retry without the image so the UTR and Pending status still reach the admin dashboard
+            confirmedRecord.screenshotData = null;
+            confirmedRecord.notes = 'UPI Payment verification submitted online. (Screenshot could not be stored — verify via UTR / WhatsApp.)';
+            saved = await DandiyaDB.saveBooking(confirmedRecord);
+          }
+          if (!saved) {
+            isSubmitting = false;
+            btn.disabled = false;
+            btn.textContent = 'CONFIRM & SUBMIT PAYMENT';
+            showToast('Could not submit your payment details. Please check your internet connection and try again.', 6000);
+            return;
+          }
         } else {
           try {
             const bookings = JSON.parse(localStorage.getItem('dandiya_bookings') || '[]');

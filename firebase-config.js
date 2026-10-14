@@ -155,8 +155,10 @@ const DandiyaDB = {
         console.log('[Firebase] Synced booking to Firestore:', docId);
       } catch (err) {
         console.error('[Firebase] Firestore save error:', err);
+        return false;
       }
     }
+    return true;
   },
 
   // 2. Fetch all bookings (Admin View)
